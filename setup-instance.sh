@@ -1,6 +1,16 @@
 #!/bin/bash
 # setup-instance.sh
 
+
+#function to getPortNumber
+
+getPortNumber(){
+portNumber=false;
+while($portNumber){
+
+
+}
+}
 tomcatVersion="7"
 instanceTemplate="/usr/local/tomcat-instance-template/"$tomcatVersion
 username="bizwebsi"
@@ -77,6 +87,9 @@ esac
 exit 0'
 
 echo $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
+
+# Almost Done 
+
 
 echo "DONE"
 
