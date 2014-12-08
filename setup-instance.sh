@@ -76,7 +76,7 @@ sh $CATALINA_HOME/binstartup.sh
 esac
 exit 0'
 
-
+echo $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 
 echo "DONE"
 
