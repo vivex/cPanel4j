@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<root>
+    <tomcat-instance>
+        <username>bizwebi</username>
+        <domain_name>bizwebsite.in</domain_name>
+        <tomcat_version>7</tomcat_version>
+        <shutdown_port>80989</shutdown_port>
+        <http_port>232323</http_port>
+        <ajp_port>232323</ajp_port>
+    </tomcat-instance>
+    
+    <tomcat-instance>
+        <username>bizwebi</username>
+        <domain_name>bizwebsite.in</domain_name>
+        <tomcat_version>7</tomcat_version>
+        <shutdown_port>80989</shutdown_port>
+        <http_port>232323</http_port>
+        <ajp_port>232323</ajp_port>
+    </tomcat-instance>
+</root>
