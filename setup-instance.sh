@@ -1,24 +1,18 @@
 #!/bin/bash
 # setup-instance.sh
+# setup-instance.sh domain.com username version connectorPort ajpport shutdownport
 
+domainName=$1
+username=$2
+tomcatVersion=$3
+connectorPort=$4
+ajpPort=$5
+shutDownPort=$6
 
-#function to getPortNumber
-
-getPortNumber(){
-portNumber=false;
-while($portNumber){
-
-
-}
-}
-tomcatVersion="7"
 instanceTemplate="/usr/local/tomcat-instance-template/"$tomcatVersion
-username="bizwebsi"
-domainName="bizwebsite.in"
-connectorPort="8989"
-ajpPort="3232"
-shutDownPort="8023"
-catalinaHome="/usr/share/apache-tomcat-7.0.57"
+
+
+catalinaHome="/usr/share/apache-tomcat-"$tomcatVersion
 userTomcatDir=/home/$username/tomcat-$tomcatVersion/$domainName
 mkdir -p $userTomcatDir
 cp -r $instanceTemplate/logs $instanceTemplate/conf $instanceTemplate/temp $instanceTemplate/webapps $userTomcatDir
