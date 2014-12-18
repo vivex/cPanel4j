@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Author: VIVEK SONI (contact@viveksoni.net)
+ * Tomcat Class
+ * 
+ */
 class Tomcat {
     public $instanceFileName = "tomcat-instances.xml";
     public function getXMLArray() {
@@ -15,7 +19,7 @@ class Tomcat {
     }
 
     public function reservedArray($instances) {
-        $userPorts = array('8080', '80'); //this array will hold all reserved ports in 1d array
+        $userPorts = array('8080', '80','25565','3306','2638','2086','2087','2095','2096','2083','2082'); //this array will hold all reserved ports in 1d array
         foreach ($instances as $instance) {
             array_push($userPorts, $instance['shutdown_port']);
             array_push($userPorts, $instance['http_port']);
@@ -60,7 +64,7 @@ class Tomcat {
         fwrite($myfile, $content);
         fclose($myfile);
     }
-
+    
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $instancesArray = $this->getXMLArray();
         var_dump($instancesArray);
@@ -79,10 +83,10 @@ class Tomcat {
             $command = escapeshellarg($command);
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
             $result = exec($command);
-            echo "$result";
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
+                return array("status"=>'Success','message'=>'Instance Created Successfully');
             } else {
                 echo $result;
                 echo "Fail";
