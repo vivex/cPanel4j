@@ -9,7 +9,8 @@ class Tomcat {
     public $instanceFileName = "tomcat-instances.xml";
     public function getXMLArray() {
         $myfile = fopen($this->instanceFileName, "r") or die("Unable to open file in read mode!");
-        $xmlstring = fread($myfile, filesize($fileName));
+        echo "My File is".$myfile;
+        $xmlstring = fread($myfile, filesize($this->instanceFileName));
         echo "HERE IS XML";
         var_dump($xmlstring);die();
         $xml = simplexml_load_string($xmlstring);

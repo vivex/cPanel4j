@@ -19,11 +19,10 @@ if ! [[ $connectorPort =~ $re ]] ||  ! [[ $ajpPort =~ $re ]] ||  ! [[ $shutDownP
 exit
 fi
 
-instanceTemplate="/usr/local/tomcat-instance-template/"$tomcatVersion
-
+instanceTemplate=$tomcatVersion
 catalinaHome="/usr/share/apache-tomcat-"$tomcatVersion
 
-userTomcatDir=/home/$username/tomcat-$tomcatVersion/$domainName
+userTomcatDir=/home/$username/$domainName/tomcat-$tomcatVersion/
 
 mkdir -p $userTomcatDir
 
