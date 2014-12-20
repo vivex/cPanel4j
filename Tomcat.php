@@ -4,11 +4,14 @@
  * Tomcat Class
  * 
  */
+error_reporting(E_ALL);
 class Tomcat {
     public $instanceFileName = "tomcat-instances.xml";
     public function getXMLArray() {
         $myfile = fopen($this->instanceFileName, "r") or die("Unable to open file in read mode!");
         $xmlstring = fread($myfile, filesize($fileName));
+        echo "HERE IS XML";
+        var_dump($xmlstring);die();
         $xml = simplexml_load_string($xmlstring);
         $json = json_encode($xml);
         $instances = json_decode($json, TRUE);
@@ -66,7 +69,7 @@ class Tomcat {
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $instancesArray = $this->getXMLArray();
         var_dump($instancesArray);
-        die();
+        
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
         if ($this->checkDomain($instancesArray, $domainName)) {
@@ -79,7 +82,7 @@ class Tomcat {
             array_push($reservedArray, $ajp_port);
             $command = "sh setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             $command = escapeshellarg($command);
-            echo "Executing".$command;
+            echo "Executing".$command; die();
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
             //$result = exec($command);
             if ($result == 'DONE') {
