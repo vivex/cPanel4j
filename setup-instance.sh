@@ -22,7 +22,7 @@ fi
 instanceTemplate=$tomcatVersion
 catalinaHome="/usr/share/apache-tomcat-"$tomcatVersion
 
-userTomcatDir=/home/$username/$domainName/tomcat-$tomcatVersion/
+userTomcatDir=/home/$username/public_html/$domainName/tomcat-$tomcatVersion/
 
 mkdir -p $userTomcatDir
 
@@ -94,7 +94,7 @@ sh $CATALINA_HOME/bin/shutdown.sh \n
 sh $CATALINA_HOME/binstartup.sh \n
 ;; \n
 esac \n
-exit 0' \n
+exit 0\'
 
 echo $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 

@@ -80,7 +80,7 @@ class Tomcat {
             $command = escapeshellarg($command);
             echo "About to".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-            $result = exec($command);
+            $result = shell_exec($command);
             echo "Command Executed";
             echo $result;
             if ($result == 'DONE') {
