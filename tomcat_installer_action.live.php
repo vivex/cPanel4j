@@ -10,6 +10,8 @@ $cpanel->set_debug(1);
 echo $cpanel->header('cPanel4J');
 $domainName = $_POST['domainName'];
 $tomCatVersion = $_POST['tomcat-version'];
+echo $tomCatVersion;
+echo $domainName;
 if($tomCatVersion!='7.0.57' || $tomCatVersion!='8.0.15' || $domaineName == ""){
     echo "Error: Error In Form Data";
 }
