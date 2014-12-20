@@ -16,8 +16,10 @@ if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $domainList = $domainListApiCall['cpanelresult']['data'];
  
     $docRoot = $domainList['docroot'];
+    var_dump($docRoot);
     $roots = explode("/",$docRoot);
     $userName = $roots['2'];
+    echo $userName."Is Username";
     $tomcat = new Tomcat();
     $result = $tomcat->createInstance($domainName, $userName, $tomcatVersion);
     if($result['status']=="success"){
