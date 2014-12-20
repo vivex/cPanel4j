@@ -10,7 +10,7 @@ $cpanel->set_debug(1);
 echo $cpanel->header('cPanel4J');
 $domainName = $_POST['domainName'];
 $tomCatVersion = $_POST['tomcat-version'];
-if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domaineName != ""){
+if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domainName != ""){
 
     $domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
     $domainList = $domainListApiCall['cpanelresult']['data'];
