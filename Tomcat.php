@@ -78,7 +78,6 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
-            //echo $ajp_port . " - " . $http_port . "-" . $shutdown_port;
             $command = "sh setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             $command = escapeshellarg($command);
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
@@ -86,18 +85,14 @@ class Tomcat {
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
-                return array("status"=>'Success','message'=>'Instance Created Successfully');
+                return array("status"=>'success','message'=>'Instance Created Successfully');
             } else {
-                echo $result;
-                echo "Fail";
-                  $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
+                return array('status'=>'fail','message'=>$result);  
+                
             }
         } else {
-            echo "Domain ALready There";
+            return array('status'=>'fail','message'=>"Domain Is already there");  
         }
     }
 
 }
-
-$tm = new Tomcat();
-$tm->createInstance("bizwebsddite.in", "vivek", "7");
