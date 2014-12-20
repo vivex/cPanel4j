@@ -78,9 +78,9 @@ class Tomcat {
             array_push($reservedArray, $ajp_port);
             $command = "sh setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             $command = escapeshellarg($command);
-            echo "Executing".$command; die();
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-            //$result = exec($command);
+            $result = exec($command);
+            echo $result;
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
