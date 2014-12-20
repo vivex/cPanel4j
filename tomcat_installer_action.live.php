@@ -10,10 +10,8 @@ $cpanel->set_debug(1);
 echo $cpanel->header('cPanel4J');
 $domainName = $_POST['domainName'];
 $tomCatVersion = $_POST['tomcat-version'];
-if(($tomCatVersion!='7.0.57' || $tomCatVersion!='8.0.15') && $domaineName == ""){
-    echo "Error: Error In Form Data";
-}
-else{
+if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domaineName != ""){
+
     $domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
     $domainList = $domainListApiCall['cpanelresult']['data'];
     $docRoot = $domain['docroot'];
@@ -22,6 +20,8 @@ else{
     $tomcat = new Tomcat();
     $result = $tomcat->createInstance($domainName, $userName, $tomcatVersion);
     
+}else{
+    echo "Form Data Error";
 }
 
 
