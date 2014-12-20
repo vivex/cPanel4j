@@ -66,6 +66,7 @@ class Tomcat {
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $instancesArray = $this->getXMLArray();
         var_dump($instancesArray);
+        die();
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
         if ($this->checkDomain($instancesArray, $domainName)) {
@@ -80,7 +81,7 @@ class Tomcat {
             $command = escapeshellarg($command);
             echo "Executing".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-            $result = exec($command);
+            //$result = exec($command);
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
