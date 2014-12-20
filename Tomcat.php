@@ -9,10 +9,7 @@ class Tomcat {
     public $instanceFileName = "tomcat-instances.xml";
     public function getXMLArray() {
         $myfile = fopen($this->instanceFileName, "r") or die("Unable to open file in read mode!");
-        echo "My File is".$myfile;
         $xmlstring = fread($myfile, filesize($this->instanceFileName));
-        echo "HERE IS XML";
-        var_dump($xmlstring);die();
         $xml = simplexml_load_string($xmlstring);
         $json = json_encode($xml);
         $instances = json_decode($json, TRUE);
@@ -69,8 +66,6 @@ class Tomcat {
     
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $instancesArray = $this->getXMLArray();
-        var_dump($instancesArray);
-        
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
         if ($this->checkDomain($instancesArray, $domainName)) {
