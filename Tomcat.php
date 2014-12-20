@@ -66,8 +66,6 @@ class Tomcat {
     
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $instancesArray = $this->getXMLArray();
-        echo "INstance Array is ";
-        var_dump($instancesArray);
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
         if ($this->checkDomain($instancesArray, $domainName)) {

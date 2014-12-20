@@ -20,6 +20,13 @@ if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $userName = $roots['2'];
     $tomcat = new Tomcat();
     $result = $tomcat->createInstance($domainName, $userName, $tomcatVersion);
+    if($result['status']=="success"){
+        echo $result['message'];
+    }else if($result['status']=="fail"){
+        echo $result['message'];
+    }else{
+        echo "Something wrong happend";
+    }
     
 }else{
     echo "Form Data Error";
