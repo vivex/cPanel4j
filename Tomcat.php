@@ -7,7 +7,6 @@
 class Tomcat {
     public $instanceFileName = "tomcat-instances.xml";
     public function getXMLArray() {
-        echo "here";
         $myfile = fopen($this->instanceFileName, "r") or die("Unable to open file in read mode!");
         $xmlstring = fread($myfile, filesize($fileName));
         $xml = simplexml_load_string($xmlstring);
@@ -15,7 +14,6 @@ class Tomcat {
         $instances = json_decode($json, TRUE);
         fclose($myfile);
         return $instances['tomcat-instance'];
-        
     }
 
     public function reservedArray($instances) {
@@ -80,6 +78,7 @@ class Tomcat {
             array_push($reservedArray, $ajp_port);
             $command = "sh setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             $command = escapeshellarg($command);
+            echo "Executing".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
             $result = exec($command);
             if ($result == 'DONE') {
@@ -88,7 +87,6 @@ class Tomcat {
                 return array("status"=>'success','message'=>'Instance Created Successfully');
             } else {
                 return array('status'=>'fail','message'=>$result);  
-                
             }
         } else {
             return array('status'=>'fail','message'=>"Domain Is already there");  
