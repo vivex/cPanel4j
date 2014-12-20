@@ -13,8 +13,10 @@ $tomCatVersion = $_POST['tomcat-version'];
 if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domainName != ""){
 
     $domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
+    var_dump($domainListApiCall);
+    echo"<hr>";
     $domainList = $domainListApiCall['cpanelresult']['data'];
- 
+    var_dump($domainList);
     $docRoot = $domainList['docroot'];
     var_dump($docRoot);
     $roots = explode("/",$docRoot);
