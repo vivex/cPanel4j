@@ -71,7 +71,7 @@ configFile='<?xml version="1.0" encoding="utf-8"?>\n
   </Service>\n
 </Server>\n'
 
-echo $configFile  >> $userTomcatDir/conf/server.xml
+echo -e $configFile  >> $userTomcatDir/conf/server.xml
 
 
 #Now creating service file in to /etc/init.d/
@@ -96,7 +96,7 @@ sh $CATALINA_HOME/binstartup.sh \n
 esac \n
 exit 0\'
 
-echo $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
+echo -e $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 
 # Almost Done 
 
