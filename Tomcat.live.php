@@ -76,15 +76,14 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
-            //$command = dirname(__FILE__) ."/setup-instance.sh";
-            $command = exec(dirname(__FILE__) . '/setup-instance.sh arg1 arg2 arg3 4 5 6');
+            $command = dirname(__FILE__) ."/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             //$command = escapeshellarg($command);
             echo "About to".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-           // $result = exec($command);
-            echo "$command";
+            $result = exec($command);
+            echo "$result";
             echo "Command Executed";
-     
+           
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
