@@ -80,11 +80,10 @@ class Tomcat {
             $command = escapeshellarg($command);
             echo "About to".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-            $result = system($command,$rt);
-            var_dump($result);
-            echo "<hr>"; var_dump($rt);
+            $result = exec($command);
+            echo "$result";
             echo "Command Executed";
-            echo $result;
+     
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
