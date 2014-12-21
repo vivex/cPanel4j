@@ -56,6 +56,7 @@ class Tomcat {
         $newInstance['domain_name'] = $domainName;
         $newInstance['tomcat_version'] = $tomcatVersion;
         if(count($instances)>0) array_push($instances, $newInstance);else $instances=$newInstance;
+        var_dump($instances);
         $xml = new SimpleXMLElement('<root/>');
         array_walk_recursive($instances, array ($xml, 'addChild'));
         $content = $xml->asXML();
