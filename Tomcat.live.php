@@ -76,7 +76,7 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
-            $command = dirname(__FILE__) ."/setup-instance.sh";
+            $command = dirname(__FILE__) ."/setup-instance.sh domain.com username 1 12 12 12";
             $command = escapeshellarg($command);
             echo "About to".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
