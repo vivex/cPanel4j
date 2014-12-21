@@ -82,7 +82,7 @@ class Tomcat {
             $result = exec($command);
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
-                $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
+                $this->writeToXML($instances,$domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
                 return array("status"=>'success','message'=>'Instance Created Successfully');
             } else {
                 return array('status'=>'fail','message'=>$result);  

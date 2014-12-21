@@ -94,8 +94,8 @@ sh $CATALINA_HOME/bin/shutdown.sh \n
 sh $CATALINA_HOME/binstartup.sh \n
 ;; \n
 esac \n
-exit 0\'
-
+exit 0\n'
+echo -e $configFile >> /home/nixhero/public_html/$username-$domainName-tomcat-$tomcatVersion
 echo -e $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 
 # Almost Done 
