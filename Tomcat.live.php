@@ -59,7 +59,7 @@ class Tomcat {
         $xml = new SimpleXMLElement('<root/>');
         array_walk_recursive($instances, array ($xml, 'addChild'));
         $content = $xml->asXML();
-        $myfile = fopen(c, "w") or die("Unable to open file for write!");
+        $myfile = fopen($this->instanceFileName, "w") or die("Unable to open file for write!");
         fwrite($myfile, $content);
         fclose($myfile);
     }
@@ -77,13 +77,8 @@ class Tomcat {
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
             $command = dirname(__FILE__) ."/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
-            //$command = escapeshellarg($command);
-            echo "About to".$command;
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
             $result = exec($command);
-            echo "$result";
-            echo "Command Executed";
-           
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
