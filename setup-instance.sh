@@ -95,7 +95,7 @@ sh $CATALINA_HOME/binstartup.sh \n
 ;; \n
 esac \n
 exit 0\n'
-echo -e $configFile >> /service-files/$username-$domainName-tomcat-$tomcatVersion
+echo -e $configFile >> service-files/$username-$domainName-tomcat-$tomcatVersion
 #echo -e $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 
 # Almost Done 
