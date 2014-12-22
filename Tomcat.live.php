@@ -1,12 +1,16 @@
 <?php
+
 /**
  * Author: VIVEK SONI (contact@viveksoni.net)
  * Tomcat Class
  * 
  */
 error_reporting(E_ALL);
+
 class Tomcat {
+
     public $instanceFileName = "tomcat-instances.xml";
+
     public function getXMLArray() {
         $myfile = fopen($this->instanceFileName, "r") or die("Unable to open file in read mode!");
         $xmlstring = fread($myfile, filesize($this->instanceFileName));
@@ -18,7 +22,7 @@ class Tomcat {
     }
 
     public function reservedArray($instances) {
-        $userPorts = array('8080', '80','25565','3306','2638','2086','2087','2095','2096','2083','2082'); //this array will hold all reserved ports in 1d array
+        $userPorts = array('8080', '80', '25565', '3306', '2638', '2086', '2087', '2095', '2096', '2083', '2082'); //this array will hold all reserved ports in 1d array
         foreach ($instances as $instance) {
             array_push($userPorts, $instance['shutdown_port']);
             array_push($userPorts, $instance['http_port']);
@@ -47,24 +51,31 @@ class Tomcat {
         }
         return true;
     }
-    
-    public function writeToXML($instances,$domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port){
+
+    public function writeToXML($instances, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port) {
         $newInstance['shutdown_port'] = $shutdown_port;
         $newInstance['http_port'] = $http_port;
         $newInstance['ajp_port'] = $ajp_port;
         $newInstance['username'] = $userName;
         $newInstance['domain_name'] = $domainName;
         $newInstance['tomcat_version'] = $tomcatVersion;
-        if(count($instances)>0) array_push($instances, $newInstance);else $instances=$newInstance;
-        var_dump($instances);
+        if (count($instances) > 0)
+            array_push($instances, $newInstance);
+        else
+            $instances = $newInstance;
         $xml = new SimpleXMLElement('<root/>');
-        array_walk_recursive($instances, array ($xml, 'addChild'));
+        foreach ($instances as $i) {
+            $node = $xml->addChild("tomcat-instance");
+            foreach ($i as $k => $v) {
+                $node->addChild($k, $v);
+            }
+        }
         $content = $xml->asXML();
         $myfile = fopen($this->instanceFileName, "w") or die("Unable to open file for write!");
         fwrite($myfile, $content);
         fclose($myfile);
     }
-    
+
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $instancesArray = $this->getXMLArray();
         $reservedArray = $this->reservedArray($instancesArray);
@@ -77,18 +88,18 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
-            $command = dirname(__FILE__) ."/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
+            $command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
             $result = exec($command);
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
-                $this->writeToXML($instances,$domainName,$userName,$tomcatVersion,$http_port,$ajp_port,$shutdown_port);
-                return array("status"=>'success','message'=>'Instance Created Successfully');
+                $this->writeToXML($instancesArray, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port);
+                return array("status" => 'success', 'message' => 'Instance Created Successfully');
             } else {
-                return array('status'=>'fail','message'=>$result);  
+                return array('status' => 'fail', 'message' => $result);
             }
         } else {
-            return array('status'=>'fail','message'=>"Domain Is already there");  
+            return array('status' => 'fail', 'message' => "Domain Is already there");
         }
     }
 
