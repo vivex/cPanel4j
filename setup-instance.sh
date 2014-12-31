@@ -99,6 +99,11 @@ rm -f $username-$domainName-tomcat-$tomcatVersion.sh
 echo -e $configFile >> service-files/$username-$domainName-tomcat-$tomcatVersion.sh
 #echo -e $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 
+
+#Adding HTTP (ONLY HTTP) Port in iptables allow list
+iptables -A INPUT -p tcp --dport $connectorPort -j ACCEPT
+/etc/init.d/iptables restart
+
 # Almost Done 
 
 
