@@ -20,7 +20,7 @@ exit
 fi
 
 instanceTemplate=$tomcatVersion
-catalinaHome="/usr/share/apache-tomcat-"$tomcatVersion
+catalinaHome="/usr/local/cpanel4j/apache-tomcat-"$tomcatVersion
 
 userTomcatDir=/home/$username/public_html/$domainName/tomcat-$tomcatVersion/
 
@@ -70,7 +70,7 @@ configFile='<?xml version="1.0" encoding="utf-8"?>\n
     </Engine>\n
   </Service>\n
 </Server>\n'
-
+rm -f  $userTomcatDir/conf/server.xml
 echo -e $configFile  >> $userTomcatDir/conf/server.xml
 
 
@@ -95,7 +95,8 @@ sh $CATALINA_HOME/binstartup.sh \n
 ;; \n
 esac \n
 exit 0\n'
-echo -e $configFile >> service-files/$username-$domainName-tomcat-$tomcatVersion
+rm -f $username-$domainName-tomcat-$tomcatVersion.sh
+echo -e $configFile >> service-files/$username-$domainName-tomcat-$tomcatVersion.sh
 #echo -e $configFile >> /etc/init.d/$username-$domainName-tomcat-$tomcatVersion
 
 # Almost Done 
