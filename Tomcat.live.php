@@ -91,16 +91,16 @@ class Tomcat {
             
             $command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-           
+            echo "starting ";
             /**
              * Setting Up the instance now
              */
             $catalinaHome ="/usr/local/cpanel4j/apache-tomcat-".$tomcatVersion;
             $userTomcatDir = "/home/".$userName."/public_html/".$domainName."/tomcat-".$tomcatVersion."/";
-           
+           echo $userTomcatDir;
             //Step 1st Creating User Tomcat Directory
             
-           $result.=    exec("mkdir -p ".$userTomcatDir);
+           echo    exec("mkdir -p ".$userTomcatDir);
             
             //step 2nd Moving tomcat installation files to user tomcat directory
             
