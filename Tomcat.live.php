@@ -100,11 +100,11 @@ class Tomcat {
            
             //Step 1st Creating User Tomcat Directory
             
-            exec("mkdir -p ".$userTomcatDir);
+           echo  exec("mkdir -p ".$userTomcatDir);
             
             //step 2nd Moving tomcat installation files to user tomcat directory
             
-            exec("cp -r ".$tomcatVersion."/logs ".$tomcatVersion."/conf ".$tomcatVersion."/temp ".$tomcatVersion."/webapps ".$userTomcatDir);
+            echo exec("cp -r ".$tomcatVersion."/logs ".$tomcatVersion."/conf ".$tomcatVersion."/temp ".$tomcatVersion."/webapps ".$userTomcatDir);
 
             //step 3rd Writing Server.XML File
             
@@ -161,8 +161,8 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             
             
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
-        exec("iptables -A INPUT -p tcp --dport ".$http_port." -j ACCEPT");
-        exec("/etc/init.d/iptables restart");
+    echo     exec("iptables -A INPUT -p tcp --dport ".$http_port." -j ACCEPT");
+      echo   exec("/etc/init.d/iptables restart");
             $result = false;
             // $result = exec($command);
             if ($result == 'DONE') {
