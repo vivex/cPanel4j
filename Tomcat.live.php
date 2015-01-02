@@ -101,14 +101,14 @@ class Tomcat {
             //Step 1st Creating User Tomcat Directory
             
            echo    exec("mkdir -p ".$userTomcatDir);
-            
+            echo "Directory Creatied ";
             //step 2nd Moving tomcat installation files to user tomcat directory
             
             $result.=   exec("cp -r ".$tomcatVersion."/logs ".$tomcatVersion."/conf ".$tomcatVersion."/temp ".$tomcatVersion."/webapps ".$userTomcatDir);
 
             //step 3rd Writing Server.XML File
             
-            
+            echo "Content Moved";
             $serverXMLFileName = $userTomcatDir."/conf/server.xml";
             $serverXMLFileContent = '<?xml version="1.0" encoding="utf-8"?>
 <Server port="'.$shutdown_port.'" shutdown="SHUTDOWN">
