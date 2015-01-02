@@ -88,32 +88,81 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
+            
             $command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
            
-
-            //creating service statup sh file
+            /**
+             * Setting Up the instance now
+             */
             $catalinaHome ="/usr/local/cpanel4j/apache-tomcat-".$tomcatVersion;
             $userTomcatDir = "/home/".$userName."/public_html/".$domainName."/tomcat-".$tomcatVersion."/";
-            $fileName = "service-files/".$userName."-".$domainName."-tomcat-".$tomcatVersion.".sh";
-            $serviceFileContent = "#!/bin/bash \n
-                #description: Tomcat-".$domainName." start stop restart \n
-                #processname: tomcat-".$userName."-".$domainName." \n
-                #chkconfig: 234 20 80 \n
-                CATALINA_HOME=".$catalinaHome." \n
-                export CATALINA_BASE=".$userTomcatDir." \n
-                case $1 in \n
-                start) \n
-                sh \$CATALINA_HOME/bin/startup.sh \n
-                ;; \n
-                stop) \n
-                sh \$CATALINA_HOME/bin/shutdown.sh 
-                ;; \n
-                restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.sh \n
-                ;; \n esac \n exit 0";
+           
+            //Step 1st Creating User Tomcat Directory
+            
+            exec("mkdir -p ".$userTomcatDir);
+            
+            //step 2nd Moving tomcat installation files to user tomcat directory
+            
+            exec("cp -r ".$tomcatVersion."/logs ".$tomcatVersion."/conf ".$tomcatVersion."/temp ".$tomcatVersion."/webapps ".$userTomcatDir);
+
+            //step 3rd Writing Server.XML File
+            
+            
+            $serverXMLFileName = $userTomcatDir."/conf/server.xml";
+            $serverXMLFileContent = '<?xml version="1.0" encoding="utf-8"?>
+<Server port="'.$shutdown_port.'" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener className="org.apache.catalina.core.JasperListener" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+  </GlobalNamingResources>
+  <Service name="Catalina">
+    <Connector port="'.$http_port.'" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+    <Connector port="'.$ajp_port.'" protocol="AJP/1.3" redirectPort="8443" />
+    <Engine name="Catalina" defaultHost="localhost">
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase"/>
+      </Realm>
+      <Host name="localhost"  appBase="webapps"
+            unpackWARs="true" autoDeploy="true">
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access_log." suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+      </Host>\n
+    </Engine>\n
+  </Service>
+</Server>';
+            $configFile = fopen($serverXMLFileName,"w");
+            fwrite($configFile,$serverXMLFileContent);
+            fclose($configFile);
+            
+            
+            // Step 4 creating service statup sh file
+          $fileName = "service-files/".$userName."-".$domainName."-tomcat-".$tomcatVersion.".sh";
+            $serviceFileContent = "#!/bin/bash \n#description: Tomcat-".$domainName." start stop restart \n#processname: tomcat-".$userName."-".$domainName." \n
+#chkconfig: 234 20 80 \n CATALINA_HOME=".$catalinaHome." \n export CATALINA_BASE=".$userTomcatDir." \n
+case $1 in \n start) \n sh \$CATALINA_HOME/bin/startup.sh \n ;; \n stop) \n sh \$CATALINA_HOME/bin/shutdown.sh \n ;; \n
+restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.sh \n;; \n esac \n exit 0";
             $serviceFile = fopen($fileName, "w");
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
+            
+            
+            //Adding HTTP (ONLY HTTP) Port in iptables allow list
+        exec("iptables -A INPUT -p tcp --dport ".$http_port." -j ACCEPT");
+        exec("/etc/init.d/iptables restart");
             $result = false;
             // $result = exec($command);
             if ($result == 'DONE') {
