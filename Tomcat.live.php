@@ -97,24 +97,20 @@ class Tomcat {
             $userTomcatDir = "/home/".$userName."/public_html/".$domainName."/tomcat-".$tomcatVersion."/";
             $fileName = "service-files/".$userName."-".$domainName."-tomcat-".$tomcatVersion.".sh";
             $serviceFileContent = "#!/bin/bash \n
-#description: Tomcat-".$domainName." start stop restart \n
-#processname: tomcat-".$userName."-".$domainName." \n
-#chkconfig: 234 20 80 \n
-CATALINA_HOME=".$catalinaHome." \n
-export CATALINA_BASE=".$userTomcatDir." \n
-case $1 in \n
-start) \n
-sh $CATALINA_HOME/bin/startup.sh \n
-;; \n
-stop) \n
-sh $CATALINA_HOME/bin/shutdown.sh 
-;; \n
-restart) 
-sh $CATALINA_HOME/bin/shutdown.sh
-sh $CATALINA_HOME/binstartup.sh
-;; 
-esac 
-exit 0";
+                #description: Tomcat-".$domainName." start stop restart \n
+                #processname: tomcat-".$userName."-".$domainName." \n
+                #chkconfig: 234 20 80 \n
+                CATALINA_HOME=".$catalinaHome." \n
+                export CATALINA_BASE=".$userTomcatDir." \n
+                case $1 in \n
+                start) \n
+                sh \$CATALINA_HOME/bin/startup.sh \n
+                ;; \n
+                stop) \n
+                sh \$CATALINA_HOME/bin/shutdown.sh 
+                ;; \n
+                restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.sh \n
+                ;; \n esac \n exit 0";
             $serviceFile = fopen($fileName, "w");
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
