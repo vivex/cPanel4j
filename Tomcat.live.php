@@ -90,7 +90,36 @@ class Tomcat {
             array_push($reservedArray, $ajp_port);
             $command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-            $result = exec($command);
+           
+
+            //creating service statup sh file
+            $catalinaHome ="/usr/local/cpanel4j/apache-tomcat-".$tomcatVersion;
+            $userTomcatDir = "/home/".$userName."/public_html/".$domainName."/tomcat-".$tomcatVersion."/";
+            $fileName = "service-files/".$userName."-".$domainName."-tomcat-".$tomcatVersion.".sh";
+            $serviceFileContent = '#!/bin/bash \n
+#description: Tomcat-'.$domainName.' start stop restart \n
+#processname: tomcat-'.$userName.'-'.$domainName.' \n
+#chkconfig: 234 20 80 \n
+CATALINA_HOME='.$catalinaHome.' \n
+export CATALINA_BASE='.$userTomcatDir.' \n
+case $1 in \n
+start) \n
+sh $CATALINA_HOME/bin/startup.sh \n
+;; \n
+stop) \n
+sh $CATALINA_HOME/bin/shutdown.sh \n
+;; \n
+restart) \n
+sh $CATALINA_HOME/bin/shutdown.sh \n
+sh $CATALINA_HOME/binstartup.sh \n
+;; \n
+esac \n
+exit 0\n';
+            $serviceFile = fopen($fileName, "w");
+            fwrite($serviceFile, $serviceFileContent);
+            fclose($serviceFile);
+            $result = false;
+            // $result = exec($command);
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($instancesArray, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port);
