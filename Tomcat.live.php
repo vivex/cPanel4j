@@ -89,19 +89,21 @@ class Tomcat {
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
             
-            $command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
+            //$command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
             // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-            echo "starting ";
+          
             /**
              * Setting Up the instance now
              */
             $catalinaHome ="/usr/local/cpanel4j/apache-tomcat-".$tomcatVersion;
             $userTomcatDir = "/home/".$userName."/public_html/".$domainName."/tomcat-".$tomcatVersion."/";
-           echo $userTomcatDir;
+       
             //Step 1st Creating User Tomcat Directory
+            if(!file_exists($userTomcatDir))
+             exec("mkdir -p ".$userTomcatDir);
+            else 
+                $result .="User Tomcat Directory Already Exists";
             
-           echo    exec("mkdir -p ".$userTomcatDir);
-            echo "Directory Creatied ";
             //step 2nd Moving tomcat installation files to user tomcat directory
             
             $result.=   exec("cp -r ".$tomcatVersion."/logs ".$tomcatVersion."/conf ".$tomcatVersion."/temp ".$tomcatVersion."/webapps ".$userTomcatDir);
@@ -129,7 +131,7 @@ class Tomcat {
     <Connector port="'.$http_port.'" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="8443" />
-    <Connector port="'.$ajp_port.'" protocol="AJP/1.3" redirectPort="8443" />
+    <Connector port="'.$ajp_port.'" enableLookups="false"  protocol="AJP/1.3" redirectPort="8443" />
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.LockOutRealm">
         <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
@@ -159,12 +161,31 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
             
-            
+            //Step 5 Creating httpd config entry in /var/cpanel/userdata
+            $Apacheversion = apache_get_version();
+            if(strpos($Apacheversion,"2.2."))
+                    $apacheDir = "2_2";
+            else if (strpos($Apacheversion,"2.4.")){
+                $apacheDir = "2_2";
+            }
+                 echo $apacheDir;
+            //$httpdConfiglFileName = "/var/cpanel/userdata/".$userName."/".$domainName;
+            $httpdConfiglDir = "/usr/local/apache/conf/userdata/std/".$apacheDir."/".$userName."/".$domainName."/";
+             exec("mkdir -p ".$httpdConfiglDir);
+             $httpdConfiglFileName = $httpdConfiglDir."httpd.conf";
+            $httpdConfigFileContent ="ProxyPass / ajp://localhost:".$ajp_port."/ \n ProxyPassReverse / ajp://localhost:".$ajp_port;
+            $httpdConfigFile = fopen($httpdConfiglFileName,"w");
+            fwrite($httpdConfigFile, $httpdConfigFileContent);
+            fclose($httpdConfigFile);
+                   
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
-    $result.=     exec("iptables -A INPUT -p tcp --dport ".$http_port." -j ACCEPT");
-      $result.=    exec("/etc/init.d/iptables restart");
+          $result.=     exec("iptables -A INPUT -p tcp --dport ".$http_port." -j ACCEPT");
+          $result.=    exec("/etc/init.d/iptables restart");
             $result = false;
             // $result = exec($command);
+            
+            //verifying installation
+           // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($instancesArray, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port);
