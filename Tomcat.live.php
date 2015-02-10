@@ -88,32 +88,28 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
-            
-            //$command = dirname(__FILE__) . "/setup-instance.sh $domainName $userName $tomcatVersion $http_port $ajp_port $shutdown_port";
-            // setup-instance.sh domain.com username version connectorPort ajpport shutdownport
-          
             /**
              * Setting Up the instance now
              */
-            $catalinaHome ="/usr/local/cpanel4j/apache-tomcat-".$tomcatVersion;
-            $userTomcatDir = "/home/".$userName."/public_html/".$domainName."/tomcat-".$tomcatVersion."/";
-       
+            $catalinaHome = "/usr/local/cpanel4j/apache-tomcat-" . $tomcatVersion;
+            $userTomcatDir = "/home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "/";
+
             //Step 1st Creating User Tomcat Directory
-            if(!file_exists($userTomcatDir))
-             exec("mkdir -p ".$userTomcatDir);
-            else 
+            if (!file_exists($userTomcatDir)) {
+                exec("mkdir -p " . $userTomcatDir);
+            } else {
                 $result .="User Tomcat Directory Already Exists";
-            
+            }
+
+
             //step 2nd Moving tomcat installation files to user tomcat directory
-            
-            $result.=   exec("cp -r ".$tomcatVersion."/logs ".$tomcatVersion."/conf ".$tomcatVersion."/temp ".$tomcatVersion."/webapps ".$userTomcatDir);
+
+            $result.= exec("cp -r " . $tomcatVersion . "/logs " . $tomcatVersion . "/conf " . $tomcatVersion . "/temp " . $tomcatVersion . "/webapps " . $userTomcatDir);
 
             //step 3rd Writing Server.XML File
-            
-            echo "Content Moved";
-            $serverXMLFileName = $userTomcatDir."/conf/server.xml";
+            $serverXMLFileName = $userTomcatDir . "/conf/server.xml";
             $serverXMLFileContent = '<?xml version="1.0" encoding="utf-8"?>
-<Server port="'.$shutdown_port.'" shutdown="SHUTDOWN">
+<Server port="' . $shutdown_port . '" shutdown="SHUTDOWN">
   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
   <Listener className="org.apache.catalina.core.JasperListener" />
@@ -128,10 +124,10 @@ class Tomcat {
               pathname="conf/tomcat-users.xml" />
   </GlobalNamingResources>
   <Service name="Catalina">
-    <Connector port="'.$http_port.'" protocol="HTTP/1.1"
+    <Connector port="' . $http_port . '" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="8443" />
-    <Connector port="'.$ajp_port.'" enableLookups="false"  protocol="AJP/1.3" redirectPort="8443" />
+    <Connector port="' . $ajp_port . '" enableLookups="false"  protocol="AJP/1.3" redirectPort="8443" />
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.LockOutRealm">
         <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
@@ -146,46 +142,49 @@ class Tomcat {
     </Engine>\n
   </Service>
 </Server>';
-            $configFile = fopen($serverXMLFileName,"w");
-            fwrite($configFile,$serverXMLFileContent);
+            $configFile = fopen($serverXMLFileName, "w");
+            fwrite($configFile, $serverXMLFileContent);
             fclose($configFile);
-            
-            
-            // Step 4 creating service statup sh file
-          $fileName = "service-files/".$userName."-".$domainName."-tomcat-".$tomcatVersion.".sh";
-            $serviceFileContent = "#!/bin/bash \n#description: Tomcat-".$domainName." start stop restart \n#processname: tomcat-".$userName."-".$domainName." \n
-#chkconfig: 234 20 80 \n CATALINA_HOME=".$catalinaHome." \n export CATALINA_BASE=".$userTomcatDir." \n
+
+
+            // Step 4 creating service startup sh file
+            $fileName = "service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh";
+            $serviceFileContent = "#!/bin/bash \n#description: Tomcat-" . $domainName . " start stop restart \n#processname: tomcat-" . $userName . "-" . $domainName . " \n
+#chkconfig: 234 20 80 \n CATALINA_HOME=" . $catalinaHome . " \n export CATALINA_BASE=" . $userTomcatDir . " \n
 case $1 in \n start) \n sh \$CATALINA_HOME/bin/startup.sh \n ;; \n stop) \n sh \$CATALINA_HOME/bin/shutdown.sh \n ;; \n
 restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.sh \n;; \n esac \n exit 0";
             $serviceFile = fopen($fileName, "w");
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
-            
-            //Step 5 Creating httpd config entry in /var/cpanel/userdata
-            $Apacheversion = apache_get_version();
-            if(strpos($Apacheversion,"2.2."))
-                    $apacheDir = "2_2";
-            else if (strpos($Apacheversion,"2.4.")){
-                $apacheDir = "2_2";
-            }
-                 echo $apacheDir;
-            //$httpdConfiglFileName = "/var/cpanel/userdata/".$userName."/".$domainName;
-            $httpdConfiglDir = "/usr/local/apache/conf/userdata/std/".$apacheDir."/".$userName."/".$domainName."/";
-             exec("mkdir -p ".$httpdConfiglDir);
-             $httpdConfiglFileName = $httpdConfiglDir."httpd.conf";
-            $httpdConfigFileContent ="ProxyPass / ajp://localhost:".$ajp_port."/ \n ProxyPassReverse / ajp://localhost:".$ajp_port;
-            $httpdConfigFile = fopen($httpdConfiglFileName,"w");
-            fwrite($httpdConfigFile, $httpdConfigFileContent);
-            fclose($httpdConfigFile);
-                   
+
+
+
+
+            //Now have to add vhosts entry
+            $vhostFileDir = "usr/local/apache/conf/userdata/std/2/" . $userName . "/" . $domainName . "";
+            exec("mkdir -p " . $vhostFileDir);
+            $vhostFileName = $vhostFileDir . "/cpanel4j-ajp-vhost.conf";
+            $vHost = "ProxyPass / ajp://localhost:" . $ajp_port . "/ \n ProxyPassReverse / ajp://localhost:" . $ajp_port;
+            $vHostFile = fopen($vhostFileName, "w");
+            fwrite($vHostFile, $vHost);
+            fclose($vHostFile);
+
+            //create symlinks
+
+            $vhostFileName2_2 = "usr/local/apache/conf/userdata/std/2_2/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
+            $vhostFileName2_4 = "usr/local/apache/conf/userdata/std/2_4/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
+            exec("ln -s " . $vhostFileName . " " . $vhostFileName2_2);
+            exec("ln -s " . $vhostFileName . " " . $vhostFileName2_4);
+
+            //TODO: verifying installation 
+            // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
+            //ReBuilding Apache
+            exec("sh /usr/local/cpanel/scripts/rebuildhttpdconf");
+
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
-          $result.=     exec("iptables -A INPUT -p tcp --dport ".$http_port." -j ACCEPT");
-          $result.=    exec("/etc/init.d/iptables restart");
+            $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
+            $result.= exec("/etc/init.d/iptables restart");
             $result = false;
-            // $result = exec($command);
-            
-            //verifying installation
-           // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($instancesArray, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port);
