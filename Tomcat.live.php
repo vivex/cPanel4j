@@ -6,7 +6,7 @@
  * Plugin Directory: /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
  */
 error_reporting(E_ALL);
-
+ini_set('display_errors', 1);
 class Tomcat {
 
     public $instanceFileName = "tomcat-instances.xml";
@@ -159,7 +159,8 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
 
             //Now have to add vhosts entry
             $vhostFileDir = "/usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName;
-            $result.=exec("mkdir -p " . $vhostFileDir);
+            $result.=exec("mkdir -p " .$vhostFileDir);
+            echo exec("whoami");
             echo "executed";
             $vhostFileName = $vhostFileDir."/cpanel4j-ajp-vhost.conf";
             $vHost = "ProxyPass / ajp://localhost:" . $ajp_port . "/ \n ProxyPassReverse / ajp://localhost:" . $ajp_port;
