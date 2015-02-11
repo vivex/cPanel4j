@@ -148,7 +148,7 @@ class Tomcat {
 
 
             // Step 4 creating service startup sh file
-            $fileName = "service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh";
+             /u = "service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh";
             $serviceFileContent = "#!/bin/bash \n#description: Tomcat-" . $domainName . " start stop restart \n#processname: tomcat-" . $userName . "-" . $domainName . " \n
 #chkconfig: 234 20 80 \n CATALINA_HOME=" . $catalinaHome . " \n export CATALINA_BASE=" . $userTomcatDir . " \n
 case $1 in \n start) \n sh \$CATALINA_HOME/bin/startup.sh \n ;; \n stop) \n sh \$CATALINA_HOME/bin/shutdown.sh \n ;; \n
@@ -159,7 +159,8 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
 
             //Now have to add vhosts entry
             $vhostFileDir = "/usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName;
-            exec("mkdir -p " . $vhostFileDir);
+            echo "Executing This";
+            $result.=  exec("mkdir -p " . $vhostFileDir);
             $vhostFileName = $vhostFileDir."/cpanel4j-ajp-vhost.conf";
             $vHost = "ProxyPass / ajp://localhost:" . $ajp_port . "/ \n ProxyPassReverse / ajp://localhost:" . $ajp_port;
             $vHostFile = fopen($vhostFileName, "w");
