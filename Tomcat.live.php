@@ -3,7 +3,7 @@
 /**
  * Author: VIVEK SONI (contact@viveksoni.net)
  * Tomcat Class
- * 
+ * Plugin Directory: /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
  */
 error_reporting(E_ALL);
 
@@ -157,13 +157,10 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
 
-
-
-
             //Now have to add vhosts entry
-            $vhostFileDir = "usr/local/apache/conf/userdata/std/2/" . $userName . "/" . $domainName . "";
+            $vhostFileDir = "/usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName;
             exec("mkdir -p " . $vhostFileDir);
-            $vhostFileName = $vhostFileDir . "/cpanel4j-ajp-vhost.conf";
+            $vhostFileName = $vhostFileDir."/cpanel4j-ajp-vhost.conf";
             $vHost = "ProxyPass / ajp://localhost:" . $ajp_port . "/ \n ProxyPassReverse / ajp://localhost:" . $ajp_port;
             $vHostFile = fopen($vhostFileName, "w");
             fwrite($vHostFile, $vHost);
@@ -171,8 +168,8 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
 
             //create symlinks
 
-            $vhostFileName2_2 = "usr/local/apache/conf/userdata/std/2_2/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
-            $vhostFileName2_4 = "usr/local/apache/conf/userdata/std/2_4/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
+            $vhostFileName2_2 = "/usr/local/apache/conf/userdata/std/2_2/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
+            $vhostFileName2_4 = "/usr/local/apache/conf/userdata/std/2_4/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
             exec("ln -s " . $vhostFileName . " " . $vhostFileName2_2);
             exec("ln -s " . $vhostFileName . " " . $vhostFileName2_4);
 
@@ -184,7 +181,7 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
             $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
             $result.= exec("/etc/init.d/iptables restart");
-            $result = false;
+            echo $result;
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
                 $this->writeToXML($instancesArray, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port);
