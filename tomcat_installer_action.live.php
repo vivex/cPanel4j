@@ -5,6 +5,7 @@
 error_reporting(E_ALL);
 require_once "/usr/local/cpanel/php/cpanel.php";
 require_once "Tomcat.live.php";
+ini_set('display_errors', 1);
 $cpanel = new CPANEL();
 $cpanel->set_debug(1);
 echo $cpanel->header('cPanel4J');
@@ -19,7 +20,7 @@ if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $roots = explode("/",$docRoot);
     $userName = $roots['2'];
     $tomcat = new Tomcat();
-    $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
+    $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion,$cpanel);
     if($result['status']=="success"){
         echo $result['message'];
     }else if($result['status']=="fail"){

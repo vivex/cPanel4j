@@ -161,14 +161,14 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
 
             //Now have to add vhosts entry
            
-            $function_result = $cpanel->uapi(
+            /*$function_result = $cpanel->uapi(
     'cPanel4J', 'writeAJP',
     array(
         '0'     => $userName,
         '1'     => $domainName,
         '2'     => $ajp_port,
          )
-);
+);*/
 
         
 
