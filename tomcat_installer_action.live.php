@@ -20,7 +20,7 @@ if(($tomCatVersion=='7.0.57' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $roots = explode("/",$docRoot);
     $userName = $roots['2'];
     $tomcat = new Tomcat();
-    $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion,$cpanel);
+    $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
     if($result['status']=="success"){
         echo $result['message'];
     }else if($result['status']=="fail"){

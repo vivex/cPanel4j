@@ -77,8 +77,9 @@ class Tomcat {
         fclose($myfile);
     }
 
-    public function createInstance($domainName, $userName, $tomcatVersion,$cpanel) {
+    public function createInstance($domainName, $userName, $tomcatVersion) {
         //$cpanel = new CPANEL(); 
+        global $cpanel;
         $instancesArray = $this->getXMLArray();
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
@@ -161,14 +162,14 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
 
             //Now have to add vhosts entry
            
-            /*$function_result = $cpanel->uapi(
+            $function_result = $cpanel->uapi(
     'cPanel4J', 'writeAJP',
     array(
         '0'     => $userName,
         '1'     => $domainName,
         '2'     => $ajp_port,
          )
-);*/
+);
 
         
 
