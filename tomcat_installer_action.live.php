@@ -3,10 +3,12 @@
  * Tomcat Installation Form Handler
  */
 error_reporting(E_ALL);
+
 require_once "/usr/local/cpanel/php/cpanel.php";
-require_once "Tomcat.live.php";
-ini_set('display_errors', 1);
 $cpanel = new CPANEL();
+require_once "Tomcat.php";
+ini_set('display_errors', 1);
+
 $cpanel->set_debug(1);
 echo $cpanel->header('cPanel4J');
 $domainName = $_POST['domainName'];
