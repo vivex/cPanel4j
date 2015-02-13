@@ -4,6 +4,7 @@
  * Author: VIVEK SONI (contact@viveksoni.net)
  * Tomcat Class
  * Plugin Directory: /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
+ * UAPI Directory:  /usr/local/cpanel/Cpanel/API/cPanel4J.pm
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -76,8 +77,8 @@ class Tomcat {
         fclose($myfile);
     }
 
-    public function createInstance($domainName, $userName, $tomcatVersion) {
-        $cpanel = new CPANEL(); 
+    public function createInstance($domainName, $userName, $tomcatVersion,$cpanel) {
+        //$cpanel = new CPANEL(); 
         $instancesArray = $this->getXMLArray();
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
