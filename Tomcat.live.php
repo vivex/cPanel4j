@@ -77,6 +77,7 @@ class Tomcat {
     }
 
     public function createInstance($domainName, $userName, $tomcatVersion) {
+        $cpanel = new CPANEL(); 
         $instancesArray = $this->getXMLArray();
         $reservedArray = $this->reservedArray($instancesArray);
         //check if  domain already exists exists in instances
@@ -158,27 +159,21 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             fclose($serviceFile);
 
             //Now have to add vhosts entry
-            $vhostFileDir = "/usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName;
-            $result.=exec("mkdir -p " .$vhostFileDir);
-            echo exec("whoami");
-            echo "executed";
-            $vhostFileName = $vhostFileDir."/cpanel4j-ajp-vhost.conf";
-            $vHost = "ProxyPass / ajp://localhost:" . $ajp_port . "/ \n ProxyPassReverse / ajp://localhost:" . $ajp_port;
-            $vHostFile = fopen($vhostFileName, "w");
-            fwrite($vHostFile, $vHost);
-            fclose($vHostFile);
+           
+            $function_result = $cpanel->uapi(
+    'cPanel4J', 'writeAJP',
+    array(
+        '0'     => $userName,
+        '1'     => $domainName,
+        '2'     => $ajp_port,
+         )
+);
 
-            //create symlinks
-
-            $vhostFileName2_2 = "/usr/local/apache/conf/userdata/std/2_2/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
-            $vhostFileName2_4 = "/usr/local/apache/conf/userdata/std/2_4/" . $userName . "/" . $domainName . "/cpanel4j_ajp.conf";
-            exec("ln -s " . $vhostFileName . " " . $vhostFileName2_2);
-            exec("ln -s " . $vhostFileName . " " . $vhostFileName2_4);
+        
 
             //TODO: verifying installation 
             // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
-            //ReBuilding Apache
-            exec("sh /usr/local/cpanel/scripts/rebuildhttpdconf");
+
 
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
             $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
