@@ -7,7 +7,8 @@
  * Cron Command: * * * * * php /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/cron.php > cpanel4j_Cron_log.txt
  *
  */
-class Tomcat {
+require_once "Config.php";
+class Tomcat extends Config{
 
     private $DBWrapper;
 
@@ -42,7 +43,7 @@ class Tomcat {
         $reservedArray = $this->getReservedPorts();
         //check if  domain already exists exists in instances
         if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName)<=0) {
-
+             exec("export JAVA_HOME=".$this->java_home);
             //generate three portnumbers
             $shutdown_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $shutdown_port);
@@ -69,7 +70,7 @@ class Tomcat {
 
             //step 2nd Moving tomcat installation files to user tomcat directory
 
-            $result.= exec("cp -r tomcat-". $tomcatVersion ."-template/logs tomcat-" . $tomcatVersion . "-template/conf tomcat-" . $tomcatVersion . "-template/temp tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
+            $result.= exec("cp -r tomcat-".$tomcatVersion."-template/logs tomcat-" . $tomcatVersion . "-template/conf tomcat-" . $tomcatVersion . "-template/temp tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
 
             //step 3rd Writing Server.XML File
             $serverXMLFileName = $userTomcatDir . "/conf/server.xml";
@@ -114,8 +115,9 @@ class Tomcat {
 
 
             // Step 4 creating service startup sh file
-            exec("rm -f $fileName");
+           
             $fileName = "service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh";
+            exec("rm -f $fileName");
             $serviceFileContent = "#!/bin/bash \n#description: Tomcat-" . $domainName . " start stop restart \n#processname: tomcat-" . $userName . "-" . $domainName . " \n
 #chkconfig: 234 20 80 \n CATALINA_HOME=" . $catalinaHome . " \n export CATALINA_BASE=" . $userTomcatDir . " \n
 case $1 in \n start) \n sh \$CATALINA_HOME/bin/startup.sh \n ;; \n stop) \n sh \$CATALINA_HOME/bin/shutdown.sh \n ;; \n
@@ -123,8 +125,6 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             $serviceFile = fopen($fileName, "w");
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
-
-            //Now have to add vhosts entry
         
 
             //TODO: verifying installation 

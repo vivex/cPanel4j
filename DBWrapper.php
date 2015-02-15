@@ -1,7 +1,7 @@
 <?php
 
-require_once "DBConnection.php";
-class DBWrapper extends DBConnection{
+require_once "Config.php";
+class DBWrapper extends Config{
 
 private $connection;
 

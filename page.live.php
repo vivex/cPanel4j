@@ -39,13 +39,10 @@ if($action=="list"){
 	echo "</table>";
 	echo $cpanel->footer();
 }else if($action =="delete_instance"){
-	echo $cpanel->header('View Tomcat Instances- cPanel4J');
 	$id= $_GET['id'];
 	$DBWrapper= new DBWrapper();
 	$DBWrapper->setCronDeleteFlag($id,$userName);
-	echo "<center>Instance Deleted";
-	echo "<a href=page.live.php?action=list>Go Back</a>";
-	echo $cpanel->footer();
+	header("Location:page.php?action=list");
 
 }else if($action =="create_instance"){
 	echo $cpanel->header('cPanel4J');
