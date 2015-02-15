@@ -34,6 +34,7 @@ while($row=mysql_fetch_array($records)){
             exec("/etc/init.d/httpd restart");
 	} else if($row['delete_flag']==1){
 		//delete the instanmlce
+		$id =$row['id'];
 		$userName = $row['user_name'];
 		$domainName= $row['domain_name'];
 		$tomcatVersion= $row['tomcat_version'];
@@ -42,7 +43,7 @@ while($row=mysql_fetch_array($records)){
 		exec("rm -rf /usr/local/apache/conf/userdata/std/2_2/".$userName."/".$domainName);
 		exec("rm -rf /usr/local/apache/conf/userdata/std/2_4/".$userName."/".$domainName);
 		exec("rm -rf /home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "");
-
+		$dbWrapper->hardDeleteTCInstance($id,$userName);
 		exec("/usr/local/cpanel/scripts/rebuildhttpdconf");
         exec("/etc/init.d/httpd restart");
 

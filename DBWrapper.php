@@ -36,7 +36,7 @@ public function getAllPorts(){
 }
 
 public function getTomcatInstancesByUser($userName){
-	$query = "select * from `tomcat-instances` where user_name = '$userName' and delete_flag=0";
+	$query = "select * from `tomcat-instances` where user_name = '$userName'";
 	return mysql_query($query,$this->connection);
 }
 
@@ -67,6 +67,13 @@ public function getRecordForCron(){
 public function setCronFlag($id){
 	$id = mysql_real_escape_string($id);
 	$query = "update `tomcat-instances` set cron_flag=1 where  delete_flag=0 and id='$id'";
+	return mysql_query($query,$this->connection);
+}
+
+public function hardDeleteTCInstance($id,$userName){
+	$id = mysql_real_escape_string($id);
+	$userName = mysql_real_escape_string($userName);
+	$query = "delete from `tomcat-instances` where id='$id' and user_name='$userName'";
 	return mysql_query($query,$this->connection);
 }
 public function setCronDeleteFlag($id,$userName){
