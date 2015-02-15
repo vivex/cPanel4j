@@ -7,26 +7,38 @@ $cpanel = new CPANEL();
 $cpanel->set_debug(1);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-$action = $_GET['action'];
-if($action=="list"){
-	echo $cpanel->header('View Tomcat Instances- cPanel4J');
- 	$domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
+	$domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
     $domainList = $domainListApiCall['cpanelresult']['data'];
     $domainList = $domainList['0'];
     $docRoot = $domainList['docroot'];
     $roots = explode("/",$docRoot);
     $userName = $roots['2'];
+$action = $_GET['action'];
+if($action=="list"){
+	echo $cpanel->header('View Tomcat Instances- cPanel4J');
+ 	
 
 	$DBWrapper= new DBWrapper();
+	$count = 1;
 	$instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
-	echo "<table class='table'><tr><th>Domain Name</th><th>TomcatVersion</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
+	echo "<table class='table'><tr><th>#</th><th>Domain Name</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
 
 	while($row = mysql_fetch_array($instanceResult)){
-		echo "<tr><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td>Delete</td></tr>";
+		$status="Running";
+		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td><a href=page.live.php?action=delete_instance&id=".$row['id'].">Delete</a></td></tr>";
+	$count++;
 	}
 
 	echo "</table>";
+	echo $cpanel->footer();
 }else if($action =="delete_instance"){
+	echo $cpanel->header('View Tomcat Instances- cPanel4J');
+	$id= $_GET['id'];
+	$DBWrapper= new DBWrapper();
+	$DBWrapper->setCronDeleteFlag($id,$userName);
+	echo "<center>Instance Deleted";
+	echo "<a href=page.live.php?action=list>Go Back</a>";
+	echo $cpanel->footer();
 
 }else if($action =="create_instance"){
 	echo $cpanel->header('cPanel4J');
