@@ -40,7 +40,6 @@ class Tomcat {
     public function createInstance($domainName, $userName, $tomcatVersion) {
         $result="";
         $reservedArray = $this->getReservedPorts();
-        echo $this->DBWrapper->getTomcatInstancesCountByDomain($domainName)."Count";
         //check if  domain already exists exists in instances
         if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName)<=0) {
 
