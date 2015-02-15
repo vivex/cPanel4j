@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ALL);
 require_once "/usr/local/cpanel/php/cpanel.php";
+require_once "DBWrapper.php";
+require_once "Tomcat.php";
 $cpanel = new CPANEL();
 $cpanel->set_debug(1);
 echo $cpanel->header('cPanel4J');
@@ -20,7 +22,7 @@ echo "</select></div></div>";
 <div class="form-group">
 	<label for="version" class="col-sm-4 control-label">Tomcat Version</label>
 	<div class="col-sm-8"><select name="tomcat-version" class="form-control">
-		<option value="7.0.57">7.0.57 (Recommended)</option>
+		<option value="7.0.59">7.0.59 (Recommended)</option>
 		<option value="8.0.15">8.0.15</optioni>
 	</select></div>
 </div>

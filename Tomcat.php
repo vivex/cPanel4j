@@ -55,7 +55,7 @@ class Tomcat {
             /**
              * Setting Up the instance now
              */
-            $catalinaHome = "/usr/local/cpanel4j/apache-tomcat-" . $tomcatVersion;
+            $catalinaHome = "/usr/local/cpanel4j/tomcat-" . $tomcatVersion."-engine";
             $userTomcatDir = "/home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "/";
 
             //Step 1st Creating User Tomcat Directory
@@ -70,7 +70,7 @@ class Tomcat {
 
             //step 2nd Moving tomcat installation files to user tomcat directory
 
-            $result.= exec("cp -r " . $tomcatVersion . "/logs " . $tomcatVersion . "/conf " . $tomcatVersion . "/temp " . $tomcatVersion . "/webapps " . $userTomcatDir);
+            $result.= exec("cp -r tomcat-". $tomcatVersion ."-template/logs tomcat-" . $tomcatVersion . "-template/conf tomcat-" . $tomcatVersion . "-template/temp tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
 
             //step 3rd Writing Server.XML File
             $serverXMLFileName = $userTomcatDir . "/conf/server.xml";
@@ -104,8 +104,8 @@ class Tomcat {
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                prefix="localhost_access_log." suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
-      </Host>\n
-    </Engine>\n
+      </Host>
+    </Engine>
   </Service>
 </Server>';
             $configFile = fopen($serverXMLFileName, "w");
@@ -146,6 +146,12 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
         } else {
             return array('status' => 'fail', 'message' => "Domain Is already there");
         }
+    }
+
+
+    public function deleteInstance($instanceId){
+        $instance =  $this->DBWrapper->setCronDeleteFlag($instanceId);
+        return true;
     }
 
 }

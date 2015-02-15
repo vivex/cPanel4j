@@ -52,8 +52,14 @@ public function getTomcatInstancesCountByDomain($domainName){
 
 }
 
+public function getInstance($id){
+	$query = "select * from `tomcat-instances` where id = '$id'  delete_flag=0 ";
+	$result =  mysql_query($query,$this->connection);
+	return mysql_fetch_array($result);
+}
+
 public function getRecordForCron(){
-	$query = "select * from `tomcat-instances` where  delete_flag=0 and cron_flag=0";
+	$query = "select * from `tomcat-instances` where  cron_flag=0";
 	return mysql_query($query,$this->connection);
 
 }
@@ -62,7 +68,10 @@ public function setCronFlag($id){
 	$query = "update `tomcat-instances` set cron_flag=1 where  delete_flag=0 and id='$id'";
 	return mysql_query($query,$this->connection);
 }
-
+public function setCronDeleteFlag($id){
+	$query = "update `tomcat-instances` set cron_flag=0,delete_flag=1 where  id='$id'";
+	return mysql_query($query,$this->connection);
+}
 public function __destruct() {
 	mysql_close($this->connection);
 }
