@@ -1,12 +1,10 @@
 <?php
 
-class DBWrapper{
+require_once "DBConnection.php";
+class DBWrapper extends DBConnection{
 
 private $connection;
-private $host= "localhost";
-private $userName="root";
-private $password="root";
-private $database="cpanel4j";
+
 public function __construct(){
     $this->connection = mysql_connect($this->host, $this->userName, $this->password);
     mysql_select_db($this->database, $this->connection);
@@ -38,7 +36,8 @@ public function getAllPorts(){
 }
 
 public function getTomcatInstancesByUser($userName){
-
+	$query = "select * from `tomcat-instances` where user_name = '$userName' and delete_flag=0";
+	return mysql_query($query,$this->connection);
 }
 
 public function getTomcatInstancesCountByDomain($domainName){
