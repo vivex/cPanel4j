@@ -10,9 +10,10 @@ while($row=mysql_fetch_array($records)){
 	if($row['delete_flag']==0){
 	//install instnace
  	//Now have to add vhosts entry
-	$userName = $row['user_name'];
-	$domainName = $row['domain_name'];
-	$ajp_port =  $row['ajp_port'];
+			$userName = $row['user_name'];
+			$domainName = $row['domain_name'];
+			$ajp_port =  $row['ajp_port'];
+			$tomcatVersion = $row['tomcat_version'];
 
             $vhostFileDir = "/usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName;
             exec("mkdir -p " . $vhostFileDir);
@@ -32,6 +33,8 @@ while($row=mysql_fetch_array($records)){
             $dbWrapper->setCronFlag($row['id']);
             exec("/usr/local/cpanel/scripts/rebuildhttpdconf");
             exec("/etc/init.d/httpd restart");
+            echo exec("sh service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh start");
+
 	} else if($row['delete_flag']==1){
 		//delete the instanmlce
 		$id =$row['id'];
