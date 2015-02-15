@@ -68,7 +68,7 @@ public function getRecordForCron(){
 
 public function setCronFlag($id){
 	$id = mysql_real_escape_string($id);
-	$query = "update `tomcat-instances` set cron_flag=1 ,status="start" where  delete_flag=0 and id='$id'";
+	$query = "update `tomcat-instances` set cron_flag=1 ,status='start' where  delete_flag=0 and id='$id'";
 	return mysql_query($query,$this->connection);
 }
 
@@ -89,7 +89,7 @@ public function setStatus($status,$id,$userName){
 	$userName = mysql_real_escape_string($userName);
 	if($status=="start" || $status=="stop"){
 	$query = "update `tomcat-instances` set status='$status'  where  id='$id' and user_name='$userName'";
-		return mysql_query($query,$this->connection);
+	return mysql_query($query,$this->connection);
 	}
 }
 public function __destruct() {
