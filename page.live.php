@@ -3,7 +3,8 @@
 require_once "/usr/local/cpanel/php/cpanel.php";
 $cpanel = new CPANEL();
 $cpanel->set_debug(1);
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 $action = $_GET['action'];
 if($action=="list"){
  	$domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
