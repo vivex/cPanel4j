@@ -43,6 +43,7 @@ while($row=mysql_fetch_array($records)){
 		echo exec("rm -rf /usr/local/apache/conf/userdata/std/2_2/".$userName."/".$domainName);
 		echo exec("rm -rf /usr/local/apache/conf/userdata/std/2_4/".$userName."/".$domainName);
 		echo exec("rm -rf /home/".$userName ."/".$domainName);
+		echo exec("rm service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh");
 
 		$dbWrapper->hardDeleteTCInstance($id,$userName);
 		exec("/usr/local/cpanel/scripts/rebuildhttpdconf");

@@ -7,7 +7,7 @@ $cpanel = new CPANEL();
 $cpanel->set_debug(1);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-	$domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
+	$domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array());
     $domainList = $domainListApiCall['cpanelresult']['data'];
     $domainList = $domainList['0'];
     $docRoot = $domainList['docroot'];
@@ -16,8 +16,6 @@ ini_set('display_errors', 1);
 $action = $_GET['action'];
 if($action=="list"){
 	echo $cpanel->header('View Tomcat Instances- cPanel4J');
- 	
-
 	$DBWrapper= new DBWrapper();
 	$count = 1;
 	$instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
@@ -29,20 +27,64 @@ if($action=="list"){
 			$status="<font color=yellow>Pending Installation</font>";
 			else if($row['delete_flag']==1)
 			$status="<font color=red>Pending Delete</font>";
-		} else if($row['cron_flag']==1)
-		$status="<font color=green>Running</font>";
+		} else if($row['cron_flag']==1){
+		if($row['status']=="stop") $status="<font color=red>Stopped</font>";
+		if($row['status']=="start") $status="<font color=green>Running</font>";
+	}
 		
-		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td><a href=page.live.php?action=delete_instance&id=".$row['id'].">Delete</a></td></tr>";
+		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td>";
+		if($row['status']=="stop") echo "<a href=# onclick='startTomcatInstance(".$row['id'].")'>Start</a>";
+		if($row['status']=="start") echo "<a href=#>Stop</a>";
+		echo "<a href=# onclick='deleteTomcatInstance(".$row['id']."') >Delete</a></td></tr>";
 	$count++;
 	}
 
 	echo "</table>";
+	?>
+<script>
+function startTomcatInstance(id){
+	$.ajax({
+        url: 'page.live.php?action=start_tomcat_instance&id='+id,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+         if(data['result']=="success"){
+         	alert("SuccesFully Started");
+         	location.reload();
+         }else{
+         	alert("Error Occured");
+         }
+        }
+    });
+	
+}
+
+function deleteTomcatInstance(id){
+	if(confirm("Are You Sure You Want to Delete This Instance. Deleting The Instance Will Remove Your all data.")){
+		 $.ajax({
+        url: 'page.live.php?action=delete_instance&id='+id,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+         if(data['result']=="success"){
+         	alert("SuccesFully Deleted");
+         	location.reload();
+         }else{
+         	alert("Error Occured");
+         }
+        }
+    });
+	}
+}
+</script>
+	<?php
 	echo $cpanel->footer();
 }else if($action =="delete_instance"){
 	$id= $_GET['id'];
 	$DBWrapper= new DBWrapper();
 	$DBWrapper->setCronDeleteFlag($id,$userName);
-	header("Location:page.php?action=list");
+	$arr = array('result' => "success");
+	echo json_encode($arr);
 
 }else if($action =="create_instance"){
 	echo $cpanel->header('cPanel4J');
@@ -59,6 +101,8 @@ echo "<option>".$domain['domain']."</option>";
 echo "</select></div></div>";
 
 ?>
+
+
 <div class="form-group">
 	<label for="version" class="col-sm-4 control-label">Tomcat Version</label>
 	<div class="col-sm-8"><select name="tomcat-version" class="form-control">
@@ -102,7 +146,7 @@ if(($tomCatVersion=='7.0.59' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
     if($result['status']=="success"){
         
-        header("Location:page.php?action=list");
+        header("Location:page.live.php?action=list");
     }else if($result['status']=="fail"){
         echo $result['message'];
     }else{
@@ -114,6 +158,23 @@ if(($tomCatVersion=='7.0.59' || $tomCatVersion=='8.0.15') & $domainName != ""){
 }
 
 echo $cpanel->footer();
+} else if($action=="start_tomcat_instance"){
+	$id=$_GET['id'];
+	$Tomcat=new Tomcat();
+	$Tomcat->tomcatInstanceAction($id,$userName,"start");
+	echo "Success";
+} else if($action=="stop_tomcat_instance"){
+	$id=$_GET['id'];
+	$Tomcat=new Tomcat();
+	$Tomcat->tomcatInstanceAction($id,$userName,"stop");
+	echo "Success";
+}
+else if($action=="restart_tomcat_instance"){
+	$id=$_GET['id'];
+	$Tomcat=new Tomcat();
+	$Tomcat->tomcatInstanceAction($id,$userName,"stop");
+	$Tomcat->tomcatInstanceAction($id,$userName,"start");
+	echo "Success";
 }
 
 
