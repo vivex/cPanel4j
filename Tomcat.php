@@ -54,7 +54,7 @@ class Tomcat {
             /**
              * Setting Up the instance now
              */
-            $catalinaHome = "/usr/local/cpanel4j/tomcat-" . $tomcatVersion."-engine";
+            $catalinaHome = "/usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/tomcat-" . $tomcatVersion."-engine";
             $userTomcatDir = "/home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "/";
 
             //Step 1st Creating User Tomcat Directory
@@ -73,6 +73,7 @@ class Tomcat {
 
             //step 3rd Writing Server.XML File
             $serverXMLFileName = $userTomcatDir . "/conf/server.xml";
+            exec("rm -f $serverXMLFileName");
             $serverXMLFileContent = '<?xml version="1.0" encoding="utf-8"?>
 <Server port="' . $shutdown_port . '" shutdown="SHUTDOWN">
   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
@@ -113,6 +114,7 @@ class Tomcat {
 
 
             // Step 4 creating service startup sh file
+            exec("rm -f $fileName");
             $fileName = "service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh";
             $serviceFileContent = "#!/bin/bash \n#description: Tomcat-" . $domainName . " start stop restart \n#processname: tomcat-" . $userName . "-" . $domainName . " \n
 #chkconfig: 234 20 80 \n CATALINA_HOME=" . $catalinaHome . " \n export CATALINA_BASE=" . $userTomcatDir . " \n
