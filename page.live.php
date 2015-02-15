@@ -21,7 +21,7 @@ if($action=="list"){
 	$instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
 	echo "<table class='table'><tr><th>#</th><th>Domain Name</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
         if(mysql_num_rows($instanceResult)<=0)
-            echo "<tr><td colspan=7><center>No Instance Yet <a href=page.php?action=create_instance>Create One</a></center></td></tr>";
+            echo "<tr><td colspan=7><center>No Instance Yet <a href=page.live.php?action=create_instance>Create One</a></center></td></tr>";
 	while($row = mysql_fetch_array($instanceResult)){
 		if($row['cron_flag']==0){
 			if($row['delete_flag']==0)
@@ -35,7 +35,7 @@ if($action=="list"){
 		
 		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td>";
 		if($row['status']=="stop") echo "<a href=# onclick='startTomcatInstance(".$row['id'].")'>Start</a>";
-		if($row['status']=="start") echo "<a href=#>Stop</a>";
+		if($row['status']=="start") echo "<a href=#  onclick='startTomcatInstance(".$row['id'].")'>Stop</a>";
 		echo " | <a href=# style='color:red' onclick='deleteTomcatInstance(".$row['id'].")' >Delete</a></td></tr>";
 	$count++;
 	}
@@ -146,7 +146,6 @@ echo "</div></form>";
 echo $cpanel->footer();
 
 }else if($action =="create_instance_action"){
-	echo $cpanel->header('cPanel4J');
 $domainName = $_POST['domainName'];
 $tomCatVersion = $_POST['tomcat-version'];
 if(($tomCatVersion=='7.0.59' || $tomCatVersion=='8.0.15') & $domainName != ""){
