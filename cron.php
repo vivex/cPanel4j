@@ -41,7 +41,7 @@ while($row=mysql_fetch_array($records)){
 		exec("rm -rf /usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName);
 		exec("rm -rf /usr/local/apache/conf/userdata/std/2_2/".$userName."/".$domainName);
 		exec("rm -rf /usr/local/apache/conf/userdata/std/2_4/".$userName."/".$domainName);
-		exec("rm -rf /home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "")
+		exec("rm -rf /home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "");
 
 		exec("/usr/local/cpanel/scripts/rebuildhttpdconf");
         exec("/etc/init.d/httpd restart");
