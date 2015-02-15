@@ -65,9 +65,6 @@ class Tomcat extends Config{
                 $result .="User Tomcat Directory Already Exists";
             }
 
-
-
-
             //step 2nd Moving tomcat installation files to user tomcat directory
 
             $result.= exec("cp -r tomcat-".$tomcatVersion."-template/logs tomcat-" . $tomcatVersion . "-template/conf tomcat-" . $tomcatVersion . "-template/temp tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
