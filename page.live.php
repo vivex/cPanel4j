@@ -24,7 +24,14 @@ if($action=="list"){
 	echo "<table class='table'><tr><th>#</th><th>Domain Name</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
 
 	while($row = mysql_fetch_array($instanceResult)){
-		$status="Running";
+		if($row['cron_flag']==0){
+			if($row['delete_flag']==0)
+			$status="<font color=yellow>Pending Installation</font>";
+			else if($row['delete_flag']==1)
+			$status="<font color=red>Pending Delete</font>"
+		} else if($row['cron_flag']==1)
+		$status="<font color=green>Running</font>";
+		
 		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td><a href=page.live.php?action=delete_instance&id=".$row['id'].">Delete</a></td></tr>";
 	$count++;
 	}
@@ -82,7 +89,7 @@ echo "</div></form>";
 <?php
 echo $cpanel->footer();
 
-}else if($aciton =="create_instance_action"){
+}else if($action =="create_instance_action"){
 	echo $cpanel->header('cPanel4J');
 $domainName = $_POST['domainName'];
 $tomCatVersion = $_POST['tomcat-version'];
@@ -97,7 +104,8 @@ if(($tomCatVersion=='7.0.59' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $tomcat = new Tomcat();
     $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
     if($result['status']=="success"){
-        echo $result['message'];
+        
+        header("Location:page.php?action=list")
     }else if($result['status']=="fail"){
         echo $result['message'];
     }else{
