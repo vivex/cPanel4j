@@ -105,7 +105,7 @@ if(($tomCatVersion=='7.0.59' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
     if($result['status']=="success"){
         
-        header("Location:page.php?action=list")
+        header("Location:page.php?action=list");
     }else if($result['status']=="fail"){
         echo $result['message'];
     }else{
