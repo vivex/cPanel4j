@@ -42,6 +42,12 @@ if($action=="list"){
 	echo "</table>";
 	?>
 
+	<?php
+	echo $cpanel->footer();
+        
+        ?>
+            
+            
 <script type="text/javascript">
 function startTomcatInstance(id){
 	jQuery.ajax({
@@ -78,8 +84,8 @@ function deleteTomcatInstance(id){
 	}
 }
 </script>
-	<?php
-	echo $cpanel->footer();
+            <?php
+        
 }else if($action =="delete_instance"){
 	$id= $_GET['id'];
 	$DBWrapper= new DBWrapper();
