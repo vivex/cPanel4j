@@ -39,10 +39,11 @@ while($row=mysql_fetch_array($records)){
 		$domainName= $row['domain_name'];
 		$tomcatVersion= $row['tomcat_version'];
 
-		exec("rm -rf /usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName);
-		exec("rm -rf /usr/local/apache/conf/userdata/std/2_2/".$userName."/".$domainName);
-		exec("rm -rf /usr/local/apache/conf/userdata/std/2_4/".$userName."/".$domainName);
-		exec("rm -rf /home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "");
+		echo exec("rm -rf /usr/local/apache/conf/userdata/std/2/".$userName."/".$domainName);
+		echo exec("rm -rf /usr/local/apache/conf/userdata/std/2_2/".$userName."/".$domainName);
+		echo exec("rm -rf /usr/local/apache/conf/userdata/std/2_4/".$userName."/".$domainName);
+		echo exec("rm -rf /home/".$userName ."/".$domainName.");
+		
 		$dbWrapper->hardDeleteTCInstance($id,$userName);
 		exec("/usr/local/cpanel/scripts/rebuildhttpdconf");
         exec("/etc/init.d/httpd restart");
