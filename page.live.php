@@ -118,16 +118,6 @@ echo "</select></div></div>";
 <?php
 
 echo "</div></form>";
-?>
-<h4>Existing Tomcat Installations</h4>
-<table class="table table-striped">
-	<thead>
-		<tr>
-		<th>#</th><th>Domain</th><th>Path</th><th>Ports</th><th>Action</th></tr></thead>
-
-</table>
-
-<?php
 echo $cpanel->footer();
 
 }else if($action =="create_instance_action"){
