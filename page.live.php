@@ -9,8 +9,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 $action = $_GET['action'];
 if($action=="list"){
+	echo $cpanel->header('View Tomcat Instances- cPanel4J');
  	$domainListApiCall = $cpanel->api2('DomainLookup','getdocroot', array() );
     $domainList = $domainListApiCall['cpanelresult']['data'];
+    $domainList = $domainList['0'];
     $docRoot = $domainList['docroot'];
     $roots = explode("/",$docRoot);
     $userName = $roots['2'];
