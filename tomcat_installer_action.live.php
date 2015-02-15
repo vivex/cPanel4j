@@ -5,7 +5,9 @@
 error_reporting(E_ALL);
 
 require_once "/usr/local/cpanel/php/cpanel.php";
+require_once "DBWrapper.php";
 require_once "Tomcat.live.php"
+
 $cpanel = new CPANEL();
 ini_set('display_errors', 1);
 

@@ -4,86 +4,46 @@
  * Author: VIVEK SONI (contact@viveksoni.net)
  * Tomcat Class
  * Plugin Directory: /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
- * UAPI Directory:  /usr/local/cpanel/Cpanel/API/cPanel4J.pm
+ * Cron Command: * * * * * php /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/cron.php > cpanel4j_Cron_log.txt
+ *
  */
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 class Tomcat {
 
-    public $instanceFileName = "tomcat-instances.xml";
+    private $DBWrapper;
 
-    public function getXMLArray() {
-        $myfile = fopen($this->instanceFileName, "r") or die("Unable to open file in read mode!");
-        $xmlstring = fread($myfile, filesize($this->instanceFileName));
-        $xml = simplexml_load_string($xmlstring);
-        $json = json_encode($xml);
-        $instances = json_decode($json, TRUE);
-        fclose($myfile);
-        return $instances['tomcat-instance'];
-    }
-
-    public function reservedArray($instances) {
-        $userPorts = array('8080', '80', '25565', '3306', '2638', '2086', '2087', '2095', '2096', '2083', '2082'); //this array will hold all reserved ports in 1d array
-        foreach ($instances as $instance) {
-            array_push($userPorts, $instance['shutdown_port']);
-            array_push($userPorts, $instance['http_port']);
-            array_push($userPorts, $instance['ajp_port']);
-        }
-        return $userPorts;
+    public function __construct(){
+         $this->DBWrapper= new DBWrapper();
     }
 
     public function generateRandomPortNumber($reservedArray) {
         $random = true;
-        while ($random) {
+       while ($random) {
             $temp = rand(2000, 18000);
-            if (array_search($reservedArray, $temp)) {
+            if (array_search($temp,$reservedArray)) {
                 continue;
             } else {
                 return $temp;
             }
         }
+    
+}
+
+    public function getReservedPorts(){
+        $reservedPorts = array('8080', '80', '25565', '3306', '2638', '2086', '2087', '2095', '2096', '2083', '2082'); 
+        $userPorts = $this->DBWrapper->getAllPorts();
+        if($userPorts==null)$userPorts=array();
+        $result = array_merge($reservedPorts,$userPorts);
+        return $result;
     }
 
-    public function checkDomain($instancesArray, $domainName) {
-        foreach ($instancesArray as $instances) {
-            if ($instances['domain_name'] == $domainName) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function writeToXML($instances, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port) {
-        $newInstance['shutdown_port'] = $shutdown_port;
-        $newInstance['http_port'] = $http_port;
-        $newInstance['ajp_port'] = $ajp_port;
-        $newInstance['username'] = $userName;
-        $newInstance['domain_name'] = $domainName;
-        $newInstance['tomcat_version'] = $tomcatVersion;
-        if (count($instances) > 0)
-            array_push($instances, $newInstance);
-        else
-            $instances = $newInstance;
-        $xml = new SimpleXMLElement('<root/>');
-        foreach ($instances as $i) {
-            $node = $xml->addChild("tomcat-instance");
-            foreach ($i as $k => $v) {
-                $node->addChild($k, $v);
-            }
-        }
-        $content = $xml->asXML();
-        $myfile = fopen($this->instanceFileName, "w") or die("Unable to open file for write!");
-        fwrite($myfile, $content);
-        fclose($myfile);
-    }
 
     public function createInstance($domainName, $userName, $tomcatVersion) {
-        //$cpanel = new CPANEL(); 
-        global $cpanel;
-        $instancesArray = $this->getXMLArray();
-        $reservedArray = $this->reservedArray($instancesArray);
+        $result="";
+        $reservedArray = $this->getReservedPorts();
+        echo $this->DBWrapper->getTomcatInstancesCountByDomain($domainName)."Count";
         //check if  domain already exists exists in instances
-        if ($this->checkDomain($instancesArray, $domainName)) {
+        if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName)<=0) {
+
             //generate three portnumbers
             $shutdown_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $shutdown_port);
@@ -91,6 +51,7 @@ class Tomcat {
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
+  
             /**
              * Setting Up the instance now
              */
@@ -103,6 +64,8 @@ class Tomcat {
             } else {
                 $result .="User Tomcat Directory Already Exists";
             }
+
+
 
 
             //step 2nd Moving tomcat installation files to user tomcat directory
@@ -161,17 +124,6 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             fclose($serviceFile);
 
             //Now have to add vhosts entry
-           
-            $function_result = $cpanel->uapi(
-    'Cpanelj', 'writeajp',
-    array(
-        '0'     => $userName,
-        '1'     => $domainName,
-        '2'     => $ajp_port,
-         )
-);
-            var_dump($function_result);
-
         
 
             //TODO: verifying installation 
@@ -181,10 +133,12 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
             $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
             $result.= exec("/etc/init.d/iptables restart");
+
+            $this->DBWrapper->insertTomcatInstance($userName,$domainName,$http_port,$ajp_port,$shutdown_port,$tomcatVersion);
             echo $result;
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
-                $this->writeToXML($instancesArray, $domainName, $userName, $tomcatVersion, $http_port, $ajp_port, $shutdown_port);
+                
                 return array("status" => 'success', 'message' => 'Instance Created Successfully');
             } else {
                 return array('status' => 'fail', 'message' => $result);
