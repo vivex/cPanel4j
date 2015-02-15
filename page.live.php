@@ -41,7 +41,8 @@ if($action=="list"){
 
 	echo "</table>";
 	?>
-<script>
+
+<script type="text/javascript">
 function startTomcatInstance(id){
 	jQuery.ajax({
         url: 'page.live.php?action=start_tomcat_instance&id='+id,
