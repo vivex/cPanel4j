@@ -43,7 +43,7 @@ if($action=="list"){
 	?>
 <script>
 function startTomcatInstance(id){
-	$.ajax({
+	jQuery.ajax({
         url: 'page.live.php?action=start_tomcat_instance&id='+id,
         type: 'POST',
         dataType: 'json',
