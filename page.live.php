@@ -28,7 +28,7 @@ if($action=="list"){
 			if($row['delete_flag']==0)
 			$status="<font color=yellow>Pending Installation</font>";
 			else if($row['delete_flag']==1)
-			$status="<font color=red>Pending Delete</font>"
+			$status="<font color=red>Pending Delete</font>";
 		} else if($row['cron_flag']==1)
 		$status="<font color=green>Running</font>";
 		
