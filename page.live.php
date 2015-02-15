@@ -168,19 +168,14 @@ echo $cpanel->footer();
 	$id=$_GET['id'];
 	$Tomcat=new Tomcat();
 	$Tomcat->tomcatInstanceAction($id,$userName,"start");
-	echo "Success";
+	$arr = array('result' => "success");
+	echo json_encode($arr);
 } else if($action=="stop_tomcat_instance"){
 	$id=$_GET['id'];
 	$Tomcat=new Tomcat();
 	$Tomcat->tomcatInstanceAction($id,$userName,"stop");
-	echo "Success";
-}
-else if($action=="restart_tomcat_instance"){
-	$id=$_GET['id'];
-	$Tomcat=new Tomcat();
-	$Tomcat->tomcatInstanceAction($id,$userName,"stop");
-	$Tomcat->tomcatInstanceAction($id,$userName,"start");
-	echo "Success";
+	$arr = array('result' => "success");
+	echo json_encode($arr);
 }
 
 

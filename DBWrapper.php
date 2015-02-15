@@ -55,7 +55,7 @@ public function getTomcatInstancesCountByDomain($domainName){
 }
 
 public function getInstance($id){
-	$query = "select * from `tomcat-instances` where id = '$id'  delete_flag=0 ";
+	$query = "select * from `tomcat-instances` where id = '$id'  and delete_flag=0 ";
 	$result =  mysql_query($query,$this->connection);
 	return mysql_fetch_array($result);
 }
