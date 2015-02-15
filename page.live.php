@@ -35,7 +35,7 @@ if($action=="list"){
 		
 		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td>";
 		if($row['status']=="stop") echo "<a href=# onclick='startTomcatInstance(".$row['id'].")'>Start</a>";
-		if($row['status']=="start") echo "<a href=#  onclick='startTomcatInstance(".$row['id'].")'>Stop</a>";
+		if($row['status']=="start") echo "<a href=#  onclick='stopTomcatInstance(".$row['id'].")'>Stop</a>";
 		echo " | <a href=# style='color:red' onclick='deleteTomcatInstance(".$row['id'].")' >Delete</a></td></tr>";
 	$count++;
 	}
