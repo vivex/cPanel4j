@@ -20,7 +20,8 @@ if($action=="list"){
 	$count = 1;
 	$instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
 	echo "<table class='table'><tr><th>#</th><th>Domain Name</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
-
+        if(mysql_num_rows($instanceResult)<=0)
+            echo "<tr><td colspan=7><center>No Instance Yet <a href=page.php?action=create_instance>Create One</a></center></td></tr>";
 	while($row = mysql_fetch_array($instanceResult)){
 		if($row['cron_flag']==0){
 			if($row['delete_flag']==0)
@@ -35,7 +36,7 @@ if($action=="list"){
 		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td>";
 		if($row['status']=="stop") echo "<a href=# onclick='startTomcatInstance(".$row['id'].")'>Start</a>";
 		if($row['status']=="start") echo "<a href=#>Stop</a>";
-		echo "<a href=# onclick='deleteTomcatInstance(".$row['id'].")' >Delete</a></td></tr>";
+		echo " | <a href=# style='color:red' onclick='deleteTomcatInstance(".$row['id'].")' >Delete</a></td></tr>";
 	$count++;
 	}
 
@@ -50,8 +51,25 @@ if($action=="list"){
             
 <script type="text/javascript">
 function startTomcatInstance(id){
-	jQuery.ajax({
+	$.ajax({
         url: 'page.live.php?action=start_tomcat_instance&id='+id,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+         if(data['result']=="success"){
+         	alert("SuccesFully Started");
+         	location.reload();
+         }else{
+         	alert("Error Occured");
+         }
+        }
+    });
+	
+}
+
+function stopTomcatInstance(id){
+	$.ajax({
+        url: 'page.live.php?action=stop_tomcat_instance&id='+id,
         type: 'POST',
         dataType: 'json',
         success: function(data) {
@@ -140,16 +158,8 @@ if(($tomCatVersion=='7.0.59' || $tomCatVersion=='8.0.15') & $domainName != ""){
     $roots = explode("/",$docRoot);
     $userName = $roots['2'];
     $tomcat = new Tomcat();
-    $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
-    if($result['status']=="success"){
-        
-        header("Location:page.live.php?action=list");
-    }else if($result['status']=="fail"){
-        echo $result['message'];
-    }else{
-        echo "Something wrong happend";
-    }
-    
+    $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);    
+    header("Location:page.live.php?action=list");
 }else{
     echo "Form Data Error";
 }
