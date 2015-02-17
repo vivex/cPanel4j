@@ -18,39 +18,50 @@ if ($action == "list") {
     echo $cpanel->header('View Tomcat Instances- cPanel4J');
     $DBWrapper = new DBWrapper();
     $count = 1;
+    $pending_flag=0;
     $instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
     echo "<table class='table'><tr><th>#</th><th>Domain Name</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
     if (mysql_num_rows($instanceResult) <= 0)
         echo "<tr><td colspan=7><center>No Instance Yet <a href=page.live.php?action=create_instance>Create One</a></center></td></tr>";
     while ($row = mysql_fetch_array($instanceResult)) {
         if ($row['cron_flag'] == 0) {
+            $pending_flag=1;
             if ($row['delete_flag'] == 0 && $row['installed'] == 0)
-                $status = "<font color=yellow>Pending Installation</font>";
+                $status = '<span class="label label-info">Pending Installation</font>';
             else if ($row['delete_flag'] == 1)
-                $status = "<font color=red>Pending Delete</font>";
+                $status = '<span class="label label-danger">Pending Delete</font>';
             else if ($row['status'] == "pending_stop")
-                $status = "<font color=black>Pending Stop</font>";
+                $status = '<span class="label label-info">Pending Stop</span>';
             else if ($row['status'] == "pending_start")
-                $status = "<font color=black>Pending Start</font>";
+                $status = '<span class="label label-info">Pending Start</span>';
         } else if ($row['cron_flag'] == 1) {
 
             if ($row['status'] == "stop")
-                $status = "<font color=red>Stopped</font>";
+                $status = '<span class="label label-danger">Stopped</span>';
             else if ($row['status'] == "start")
-                $status = "<font color=green>Running</font>";
+                $status = '<span class="label label-success">Running</span>';
         }
 
 
         echo "<tr><td>$count</td><td>" . $row['domain_name'] . "</td>" . "<td>" . $row['tomcat_version'] . "</td><td>$status</td><td>" . $row['create_date'] . "</td><td>ShutDown Port:" . $row['shutdown_port'] . "<br/>HTTP Port:" . $row['http_port'] . "<br/>AJP Port:" . $row['ajp_port'] . "</td><td>";
         if ($row['status'] == "stop")
-            echo "<a href=# onclick='startTomcatInstance(" . $row['id'] . ")'>Start</a> |";
+            echo "<a href=# class='btn btn-success'  onclick='startTomcatInstance(" . $row['id'] . ")'>Start</a> |";
         if ($row['status'] == "start")
-            echo "<a href=#  onclick='stopTomcatInstance(" . $row['id'] . ")'>Stop</a> | ";
-        if($row['delete_flag'] == 0) echo " <a href=# style='color:red' onclick='deleteTomcatInstance(" . $row['id'] . ")' >Delete</a></td></tr>";
+            echo "<a href=#  class='btn btn-warning'  onclick='stopTomcatInstance(" . $row['id'] . ")' >Stop</a> | ";
+        if($row['delete_flag'] == 0) echo " <a class='btn btn-danger' href=# style='color:red' onclick='deleteTomcatInstance(" . $row['id'] . ")' >Delete</a></td></tr>";
         $count++;
     }
 
     echo "</table>";
+    
+    if($pending_flag==1){
+        ?>
+<div class="alert alert-info" role="alert">
+    Instances With Pending Status (installation/stop/start/delete) will be processed to the action within 1 minute.
+</div>
+
+<?php
+    }
     ?>
 
     <?php
