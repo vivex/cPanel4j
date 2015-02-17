@@ -30,8 +30,12 @@ if($action=="list"){
 			$status="<font color=red>Pending Delete</font>";
 		} else if($row['cron_flag']==1){
 		if($row['status']=="stop") $status="<font color=red>Stopped</font>";
-		if($row['status']=="start") $status="<font color=green>Running</font>";
-	}
+		else if($row['status']=="start") $status="<font color=green>Running</font>";
+                if($row['status']=="pending_stop") $status="<font color=black>Pending Stop</font>";
+		if($row['status']=="pending_start") $status="<font color=black>Pending Start</font>";
+                
+                    }
+                
 		
 		echo "<tr><td>$count</td><td>".$row['domain_name']."</td>"."<td>".$row['tomcat_version']."</td><td>$status</td><td>".$row['create_date']."</td><td>ShutDown Port:".$row['shutdown_port']."<br/>HTTP Port:".$row['http_port']."<br/>AJP Port:".$row['ajp_port']."</td><td>";
 		if($row['status']=="stop") echo "<a href=# onclick='startTomcatInstance(".$row['id'].")'>Start</a>";
@@ -106,8 +110,8 @@ function deleteTomcatInstance(id){
         
 }else if($action =="delete_instance"){
 	$id= $_GET['id'];
-	$DBWrapper= new DBWrapper();
-	$DBWrapper->setCronDeleteFlag($id,$userName);
+	$tomcat= new Tomcat();
+        $tomcat->deleteInstance($id,$userName);
 	$arr = array('result' => "success");
 	echo json_encode($arr);
 
@@ -167,13 +171,13 @@ echo $cpanel->footer();
 } else if($action=="start_tomcat_instance"){
 	$id=$_GET['id'];
 	$Tomcat=new Tomcat();
-	$Tomcat->tomcatInstanceAction($id,$userName,"start");
+	$Tomcat->tomcatInstanceAction($id,$userName,"pending_start");
 	$arr = array('result' => "success");
 	echo json_encode($arr);
 } else if($action=="stop_tomcat_instance"){
 	$id=$_GET['id'];
 	$Tomcat=new Tomcat();
-	$Tomcat->tomcatInstanceAction($id,$userName,"stop");
+	$Tomcat->tomcatInstanceAction($id,$userName,"pending_stop");
 	$arr = array('result' => "success");
 	echo json_encode($arr);
 }

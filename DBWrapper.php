@@ -66,10 +66,32 @@ public function getRecordForCron(){
 
 }
 
-public function setCronFlag($id){
+public function setCronFlag($id,$value){
 	$id = mysql_real_escape_string($id);
-	$query = "update `tomcat-instances` set cron_flag=1 ,status='start' where  delete_flag=0 and id='$id'";
+        $value = mysql_real_escape_string($value);
+        if($value==0 or $value==1){
+	$query = "update `tomcat-instances` set cron_flag='$value'  where  delete_flag=0 and id='$id'";
 	return mysql_query($query,$this->connection);
+        }else
+      return false;
+}
+
+public function setStatus($id,$status){
+    $id = mysql_real_escape_string($id);
+    $query = "update `tomcat-instances` set status='$status' where  id='$id'";
+    return mysql_query($query,$this->connection);
+}
+
+public function setDeleteFlag($id){
+    $id = mysql_real_escape_string($id);
+    $query = "update `tomcat-instances` set delete_flag='1' where  id='$id'";
+    return mysql_query($query,$this->connection);
+}
+
+public function setInstalledFlag($id){
+    $id = mysql_real_escape_string($id);
+    $query = "update `tomcat-instances` set installed='1'  where  id='$id'";
+    return mysql_query($query,$this->connection);
 }
 
 public function hardDeleteTCInstance($id,$userName){
@@ -78,23 +100,20 @@ public function hardDeleteTCInstance($id,$userName){
 	$query = "delete from `tomcat-instances` where id='$id' and user_name='$userName'";
 	return mysql_query($query,$this->connection);
 }
-public function setCronDeleteFlag($id,$userName){
-	$id = mysql_real_escape_string($id);
-	$userName = mysql_real_escape_string($userName);
-	$query = "update `tomcat-instances` set cron_flag=0,delete_flag=1 where  id='$id' and user_name='$userName'";
-	return mysql_query($query,$this->connection);
+
+
+public function getUserNameByInstanceId($instanceId){
+    $query = "select user_name from `tomcat-instances` where id='$instanceId'";
+    $r =  mysql_query($query,$this->connection);
+    $row= mysql_fetch_array($r);
+    return $row['user_name'];
 }
-public function setStatus($status,$id,$userName){
-	$id = mysql_real_escape_string($id);
-	$userName = mysql_real_escape_string($userName);
-	if($status=="start" || $status=="stop"){
-	$query = "update `tomcat-instances` set status='$status'  where  id='$id' and user_name='$userName'";
-	return mysql_query($query,$this->connection);
-	}
-}
+
 public function __destruct() {
 	mysql_close($this->connection);
 }
+
+
 
 }
 

@@ -151,15 +151,19 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
     public function tomcatInstanceAction($id,$userName,$action){
       $i = $this->DBWrapper->getInstance($id);
       if($i['user_name']==$userName){
-      echo exec("sh service-files/" . $i['user_name'] . "-" . $i['domain_name'] . "-tomcat-" . $i['tomcat_version'] . ".sh ".$action);
-      $this->DBWrapper->setStatus($action,$id,$userName);
+         $this->dbWrapper->setCronFlag($row['id'],0);
+         $this->dbWrapper->setStatus($row['id'],$action); 
       }
     }
 
 
-    public function deleteInstance($instanceId){
-        $instance =  $this->DBWrapper->setCronDeleteFlag($instanceId);
+    public function deleteInstance($instanceId,$userName){
+        if($this->DBWrapper->getUserNameByInstanceId($instanceId)==$userName){
+        $this->DBWrapper->setCronFlag($instanceId,0);
+        $this->DBWrapper->setDeleteFlag($instanceId);
+        
         return true;
+        }
     }
 
 }
