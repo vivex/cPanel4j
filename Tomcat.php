@@ -10,42 +10,42 @@
 require_once "Config.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-class Tomcat extends Config{
+
+class Tomcat extends Config {
 
     private $DBWrapper;
 
-    public function __construct(){
-         $this->DBWrapper= new DBWrapper();
+    public function __construct() {
+        $this->DBWrapper = new DBWrapper();
     }
 
     public function generateRandomPortNumber($reservedArray) {
         $random = true;
-       while ($random) {
+        while ($random) {
             $temp = rand(2000, 18000);
-            if (array_search($temp,$reservedArray)) {
+            if (array_search($temp, $reservedArray)) {
                 continue;
             } else {
                 return $temp;
             }
         }
-    
-}
+    }
 
-    public function getReservedPorts(){
-        $reservedPorts = array('8080', '80', '25565', '3306', '2638', '2086', '2087', '2095', '2096', '2083', '2082'); 
+    public function getReservedPorts() {
+        $reservedPorts = array('8080', '80', '25565', '3306', '2638', '2086', '2087', '2095', '2096', '2083', '2082');
         $userPorts = $this->DBWrapper->getAllPorts();
-        if($userPorts==null)$userPorts=array();
-        $result = array_merge($reservedPorts,$userPorts);
+        if ($userPorts == null)
+            $userPorts = array();
+        $result = array_merge($reservedPorts, $userPorts);
         return $result;
     }
 
-
     public function createInstance($domainName, $userName, $tomcatVersion) {
-        $result="";
+        $result = "";
         $reservedArray = $this->getReservedPorts();
         //check if  domain already exists exists in instances
-        if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName)<=0) {
-             exec("export JAVA_HOME=".$this->java_home);
+        if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName) <= 0) {
+            exec("export JAVA_HOME=" . $this->java_home);
             //generate three portnumbers
             $shutdown_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $shutdown_port);
@@ -53,11 +53,11 @@ class Tomcat extends Config{
             array_push($reservedArray, $http_port);
             $ajp_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $ajp_port);
-  
+
             /**
              * Setting Up the instance now
              */
-            $catalinaHome = "/usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/tomcat-" . $tomcatVersion."-engine";
+            $catalinaHome = "/usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/tomcat-" . $tomcatVersion . "-engine";
             $userTomcatDir = "/home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "/";
 
             //Step 1st Creating User Tomcat Directory
@@ -69,7 +69,7 @@ class Tomcat extends Config{
 
             //step 2nd Moving tomcat installation files to user tomcat directory
 
-            $result.= exec("cp -r tomcat-".$tomcatVersion."-template/logs tomcat-" . $tomcatVersion . "-template/conf tomcat-" . $tomcatVersion . "-template/temp tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
+            $result.= exec("cp -r tomcat-" . $tomcatVersion . "-template/logs tomcat-" . $tomcatVersion . "-template/conf tomcat-" . $tomcatVersion . "-template/temp tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
 
             //step 3rd Writing Server.XML File
             $serverXMLFileName = $userTomcatDir . "/conf/server.xml";
@@ -114,7 +114,7 @@ class Tomcat extends Config{
 
 
             // Step 4 creating service startup sh file
-           
+
             $fileName = "service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh";
             exec("rm -f $fileName");
             $serviceFileContent = "#!/bin/bash \n#description: Tomcat-" . $domainName . " start stop restart \n#processname: tomcat-" . $userName . "-" . $domainName . " \n
@@ -124,21 +124,19 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             $serviceFile = fopen($fileName, "w");
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
-        
+
 
             //TODO: verifying installation 
             // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
-
-
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
             $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
             $result.= exec("/etc/init.d/iptables restart");
 
-            $this->DBWrapper->insertTomcatInstance($userName,$domainName,$http_port,$ajp_port,$shutdown_port,$tomcatVersion);
+            $this->DBWrapper->insertTomcatInstance($userName, $domainName, $http_port, $ajp_port, $shutdown_port, $tomcatVersion);
             echo $result;
             if ($result == 'DONE') {
                 //cool now write this installation back to xml file
-                
+
                 return array("status" => 'success', 'message' => 'Instance Created Successfully');
             } else {
                 return array('status' => 'fail', 'message' => $result);
@@ -148,21 +146,20 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
         }
     }
 
-    public function tomcatInstanceAction($id,$userName,$action){
-      $i = $this->DBWrapper->getInstance($id);
-      if($i['user_name']==$userName){
-         $this->DBWrapper->setCronFlag($id,0);
-         $this->DBWrapper->setStatus($id,$action); 
-      }
+    public function tomcatInstanceAction($id, $userName, $action) {
+        $i = $this->DBWrapper->getInstance($id);
+        if ($i['user_name'] == $userName) {
+            $this->DBWrapper->setCronFlag($id, 0);
+            $this->DBWrapper->setStatus($id, $action);
+        }
     }
 
+    public function deleteInstance($instanceId, $userName) {
+        if ($this->DBWrapper->getUserNameByInstanceId($instanceId) == $userName) {
+            $this->DBWrapper->setCronFlag($instanceId, 0);
+            $this->DBWrapper->setDeleteFlag($instanceId);
 
-    public function deleteInstance($instanceId,$userName){
-        if($this->DBWrapper->getUserNameByInstanceId($instanceId)==$userName){
-        $this->DBWrapper->setCronFlag($instanceId,0);
-        $this->DBWrapper->setDeleteFlag($instanceId);
-        
-        return true;
+            return true;
         }
     }
 
