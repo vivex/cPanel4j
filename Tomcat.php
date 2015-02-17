@@ -151,8 +151,8 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
     public function tomcatInstanceAction($id,$userName,$action){
       $i = $this->DBWrapper->getInstance($id);
       if($i['user_name']==$userName){
-         $this->dbWrapper->setCronFlag($row['id'],0);
-         $this->dbWrapper->setStatus($row['id'],$action); 
+         $this->DBWrapper->setCronFlag($row['id'],0);
+         $this->DBWrapper->setStatus($row['id'],$action); 
       }
     }
 
