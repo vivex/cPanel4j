@@ -133,14 +133,11 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             $result.= exec("/etc/init.d/iptables restart");
 
             $this->DBWrapper->insertTomcatInstance($userName, $domainName, $http_port, $ajp_port, $shutdown_port, $tomcatVersion);
-            echo $result;
-            if ($result == 'DONE') {
+
                 //cool now write this installation back to xml file
 
-                return array("status" => 'success', 'message' => 'Instance Created Successfully');
-            } else {
-                return array('status' => 'fail', 'message' => $result);
-            }
+           return array("status" => 'success', 'message' => 'Instance Created Successfully');
+            
         } else {
             return array('status' => 'fail', 'message' => "Domain Is already there");
         }

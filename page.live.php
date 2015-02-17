@@ -19,8 +19,12 @@ if ($action == "list") {
     $DBWrapper = new DBWrapper();
     $count = 1;
     $pending_flag=0;
+    
+    if(isset($_GET['error'])){
+       echo '<div class="alert alert-info" role="alert">'.$_GET['error'].'</div>';
+    }
     $instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
-    echo "<table class='table'><tr><th>#</th><th>Domain Name</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
+    echo "<table class='table'><tr><th>#</th><th>Instance Info</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
     if (mysql_num_rows($instanceResult) <= 0)
         echo "<tr><td colspan=7><center>No Instance Yet <a href=page.live.php?action=create_instance>Create One</a></center></td></tr>";
     while ($row = mysql_fetch_array($instanceResult)) {
@@ -44,7 +48,7 @@ if ($action == "list") {
         
         $path="/home/".$row['user_name']."/".$row['domain_name']."/tomcat-".$row['tomcat_version'];
 
-        echo "<tr><td>$count</td><td>" . $row['domain_name']."<br/>".$path . "</td>" . "<td>" . $row['tomcat_version'] . "</td><td>$status</td><td>" . $row['create_date'] . "</td><td>ShutDown Port:" . $row['shutdown_port'] . "<br/>HTTP Port:" . $row['http_port'] . "<br/>AJP Port:" . $row['ajp_port'] . "</td><td>";
+        echo "<tr><td>$count</td><td><b>Domain Name:</b>" . $row['domain_name']."<br/>".$path . "</td>" . "<td>" . $row['tomcat_version'] . "</td><td>$status</td><td>" . $row['create_date'] . "</td><td>ShutDown Port:" . $row['shutdown_port'] . "<br/>HTTP Port:" . $row['http_port'] . "<br/>AJP Port:" . $row['ajp_port'] . "</td><td>";
         if ($row['status'] == "stop")
             echo "<a href=# class='btn btn-success'  onclick='startTomcatInstance(" . $row['id'] . ")'>Start</a> |";
         if ($row['status'] == "start")
@@ -150,7 +154,7 @@ if ($action == "list") {
         <label for="version" class="col-sm-4 control-label">Tomcat Version</label>
         <div class="col-sm-8"><select name="tomcat-version" class="form-control">
                 <option value="7.0.59">7.0.59 (Recommended)</option>
-                <option value="8.0.15">8.0.15</optioni>
+                <option value="8.0.18">8.0.18</option>
             </select></div>
     </div>
 
@@ -164,7 +168,7 @@ if ($action == "list") {
 } else if ($action == "create_instance_action") {
     $domainName = $_POST['domainName'];
     $tomCatVersion = $_POST['tomcat-version'];
-    if (($tomCatVersion == '7.0.59' || $tomCatVersion == '8.0.15') & $domainName != "") {
+    if (($tomCatVersion == '7.0.59' || $tomCatVersion == '8.0.18') & $domainName != "") {
 
         $domainListApiCall = $cpanel->api2('DomainLookup', 'getdocroot', array());
         $domainList = $domainListApiCall['cpanelresult']['data'];
@@ -174,7 +178,13 @@ if ($action == "list") {
         $userName = $roots['2'];
         $tomcat = new Tomcat();
         $result = $tomcat->createInstance($domainName, $userName, $tomCatVersion);
+        if($result['status']=="success")
         header("Location:page.live.php?action=list");
+        else if($result['status']=="fail"){
+            $error=  urlencode("This domain already have tomcat instance");
+          header("Location:page.live.php?action=create_instance_action&error=".$error);
+    
+        }
     } else {
         echo "Form Data Error";
     }
