@@ -22,5 +22,5 @@ CREATE TABLE `tomcat-instances` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1
 
 
-GRANT ALL PRIVILEGES ON cpanel4j TO 'cpanel4j'@'localhost';
+GRANT ALL PRIVILEGES ON cpanel4j.* TO 'cpanel4j'@'localhost';
 

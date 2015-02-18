@@ -77,9 +77,14 @@ class Tomcat extends Config {
             $serverXMLFileContent = '<?xml version="1.0" encoding="utf-8"?>
 <Server port="' . $shutdown_port . '" shutdown="SHUTDOWN">
   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
-  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
-  <Listener className="org.apache.catalina.core.JasperListener" />
-  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />';
+
+            if ($tomcatVersion == "7.0.59") {
+                $serverXMLFileContent.='<Listener className="org.apache.catalina.core.JasperListener" />';
+            }
+
+
+            $serverXMLFileContent.='<Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
   <GlobalNamingResources>
@@ -134,10 +139,9 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
 
             $this->DBWrapper->insertTomcatInstance($userName, $domainName, $http_port, $ajp_port, $shutdown_port, $tomcatVersion);
 
-                //cool now write this installation back to xml file
+            //cool now write this installation back to xml file
 
-           return array("status" => 'success', 'message' => 'Instance Created Successfully');
-            
+            return array("status" => 'success', 'message' => 'Instance Created Successfully');
         } else {
             return array('status' => 'fail', 'message' => "Domain Is already there");
         }
