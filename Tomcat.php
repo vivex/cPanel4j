@@ -32,7 +32,7 @@ class Tomcat extends Config {
     }
 
     public function getReservedPorts() {
-        $reservedPorts = array('8080', '80', '25565', '3306', '2638', '2086', '2087', '2095', '2096', '2083', '2082');
+        $reservedPorts = $this->reservedPorts;
         $userPorts = $this->DBWrapper->getAllPorts();
         if ($userPorts == null)
             $userPorts = array();

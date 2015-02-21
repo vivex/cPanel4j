@@ -47,7 +47,10 @@ if ($action == "list") {
         }
         
         $path="/home/".$row['user_name']."/".$row['domain_name']."/tomcat-".$row['tomcat_version'];
-
+        
+        
+       $path= '<a href="../filemanager/index.html?dir='.urldecode($path).'" target="_blank" class="ajaxfiles">'.$path.'</a>';
+                
         echo "<tr><td>$count</td><td><b>Domain Name:</b>" . $row['domain_name']."<br/>".$path . "</td>" . "<td>" . $row['tomcat_version'] . "</td><td>$status</td><td>" . $row['create_date'] . "</td><td>ShutDown Port:" . $row['shutdown_port'] . "<br/>HTTP Port:" . $row['http_port'] . "<br/>AJP Port:" . $row['ajp_port'] . "</td><td>";
         if ($row['status'] == "stop")
             echo "<a href=# class='btn btn-success'  onclick='startTomcatInstance(" . $row['id'] . ")'>Start</a> |";
@@ -159,7 +162,7 @@ if ($action == "list") {
     </div>
 
     <div class="form-group text-right">
-        <input id="next" class="btn btn-primary" type="submit" value="Next">
+        <input id="next" class="btn btn-primary" type="submit" value="Create Instance">
         <div id="status"></div>
     </div>
     <?php
