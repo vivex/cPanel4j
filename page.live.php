@@ -24,7 +24,7 @@ if ($action == "list") {
        echo '<div class="alert alert-info" role="alert">'.$_GET['error'].'</div>';
     }
     $instanceResult = $DBWrapper->getTomcatInstancesByUser($userName);
-    echo "<table class='table'><tr><th>#</th><th>Instance Info</th><th>TomcatVersion</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
+    echo "<table class='table'><tr><th>#</th><th>Instance Info</th><th>Tomcat Version</th><th>Status</th><th>Create Date</th><th>Ports</th><th>Action</th></tr>";
     if (mysql_num_rows($instanceResult) <= 0)
         echo "<tr><td colspan=7><center>No Instance Yet <a href=page.live.php?action=create_instance>Create One</a></center></td></tr>";
     while ($row = mysql_fetch_array($instanceResult)) {
@@ -51,7 +51,7 @@ if ($action == "list") {
         
        $path= '<a href="../filemanager/index.html?dir='.urldecode($path).'" target="_blank" class="ajaxfiles">'.$path.'</a>';
                 
-        echo "<tr><td>$count</td><td><b>Domain Name:</b>" . $row['domain_name']."<br/>".$path . "</td>" . "<td>" . $row['tomcat_version'] . "</td><td>$status</td><td>" . $row['create_date'] . "</td><td>ShutDown Port:" . $row['shutdown_port'] . "<br/>HTTP Port:" . $row['http_port'] . "<br/>AJP Port:" . $row['ajp_port'] . "</td><td>";
+        echo "<tr><td>$count</td><td><b>Domain Name:</b> " . $row['domain_name']."<br/>".$path . "</td>" . "<td>" . $row['tomcat_version'] . "</td><td>$status</td><td>" . $row['create_date'] . "</td><td>ShutDown Port:" . $row['shutdown_port'] . "<br/>HTTP Port:" . $row['http_port'] . "<br/>AJP Port:" . $row['ajp_port'] . "</td><td>";
         if ($row['status'] == "stop")
             echo "<a href=# class='btn btn-success'  onclick='startTomcatInstance(" . $row['id'] . ")'>Start</a> |";
         if ($row['status'] == "start")

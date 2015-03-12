@@ -4,9 +4,7 @@ require_once "Config.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 class DBWrapper extends Config{
-
 private $connection;
-
 public function __construct(){
     $this->connection = mysql_connect($this->host, $this->userName, $this->password);
     mysql_select_db($this->database, $this->connection);
@@ -58,6 +56,13 @@ public function getInstance($id){
 	$query = "select * from `tomcat-instances` where id = '$id'  and delete_flag=0 ";
 	$result =  mysql_query($query,$this->connection);
 	return mysql_fetch_array($result);
+}
+
+
+public function getAllInstance(){
+	$query = "select * from `tomcat-instances` where  delete_flag=0 ";
+	$result =  mysql_query($query,$this->connection);
+	return $result;
 }
 
 public function getRecordForCron(){

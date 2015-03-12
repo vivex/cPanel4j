@@ -1,10 +1,21 @@
+<?php
 /* MYSQL Commands fo cPanel4J */
+include 'Config.php';
 
-create user 'cpanel4j'@'localhost' IDENTIFIED BY 'testing';
-create database cpanel4j
+class DBConnect extends Config {
+    private $connection;
+    public function __construct(){
+        $this->connection = mysql_connect($this->host, $this->userName, $this->password);
+        mysql_select_db($this->database, $this->connection);
+    }
+    
+    public function getConnection(){
+        return $this->connection;
+    }
+}
 
 
-CREATE TABLE `tomcat-instances` (
+$query1 = "CREATE TABLE `tomcat-instances` (
  `id` int(11) NOT NULL AUTO_INCREMENT,
  `user_name` varchar(300) NOT NULL,
  `domain_name` varchar(300) NOT NULL,
@@ -19,8 +30,13 @@ CREATE TABLE `tomcat-instances` (
  UNIQUE KEY `shutdown_port` (`shutdown_port`),
  UNIQUE KEY `http_port` (`http_port`),
  UNIQUE KEY `ajp_port` (`ajp_port`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1";
 
+$dbConnect = new DBConnect();
+$connection = $dbConnect->getConnection();
+mysql_query($query1,$connection);
 
-GRANT ALL PRIVILEGES ON cpanel4j.* TO 'cpanel4j'@'localhost';
+echo "\n".mysql_error();
+echo "\nDataBase Created";
 
+?>
