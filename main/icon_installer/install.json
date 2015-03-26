@@ -1,0 +1,26 @@
+[
+{
+"order" : 11,
+"name" : "cPanel4J",
+"type" : "group",
+"id" : "cpanelforj"
+},
+{
+"icon" : "tomcat_installer_plugin.png",
+"group_id" : "cpanelforj",
+"order" : 1,
+"name" : "Tomcat Installer",
+"type" : "link",
+"id" : "tomcat_installer",
+"uri" : "cpanel4j/page.live.php?action=create_instance"
+},
+{
+"icon" : "tomcat_instance_plugin.png",
+"group_id" : "cpanelforj",
+"order" : 2,
+"name" : "Tomcat Instances",
+"type" : "link",
+"id" : "tomcat_instances",
+"uri" : "cpanel4j/page.live.php?action=list"
+}
+]
