@@ -9,24 +9,32 @@ rm -f /usr/local/cpanel/base/frontend/x3/dynamicui/dynamicui_tomcat_instances.co
 
 /usr/local/cpanel/scripts/install_plugin icon_installer.tar.gz
 
-mkdir /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
-
 /usr/local/cpanel/bin/rebuild_sprites
 
-cp Config.php plugin/
+mkdir /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
+mkdir /usr/local/cpanel/base/frontend/x3/cpanel4j
+
 
 cp -r plugin/* /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
+cp -r plugin_x3/* /usr/local/cpanel/base/frontend/x3/cpanel4j
 
-ln -s /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j /usr/local/cpanel/base/frontend/x3/cpanel4j
+cp Config.php cPanel4jCore/
+
+cp -r cPanel4jCore /
+
+chmod -R 755 /cPanel4jCore/tomcat-7.0.59-template /cPanel4jCore/tomcat-8.0.18-template
 
 
-cronCmd="* * * * * php /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/cron.php > cpanel4j_Cron_log.txt"
+cronCmd="* * * * * php /cPanel4jCore/cron.php > cpanel4j_Cron_log.txt"
 isCronThere=$(grep "$cronCmd" /var/spool/cron/root)
 if [ -z "$isCronThere" ]; then
-   echo $cronCmd  >> /var/spool/cron/root
+
+  cat <<EndXML >> /var/spool/cron/root
+* * * * * php /cPanel4jCore/cron.php > cpanel4j_Cron_log.txt
+EndXML
 fi
 
-startUpCmd="php /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/startup.sh"
+startUpCmd="php /cPanel4jCore/startup.sh"
 isStartThere=$(grep "$startUpCmd" /etc/rc.d/rc.local)
 
 if [ -z "$isStartThere" ]; then

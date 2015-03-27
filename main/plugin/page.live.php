@@ -1,8 +1,8 @@
 <?php
 //Page.php
 require_once "/usr/local/cpanel/php/cpanel.php";
-require_once "DBWrapper.php";
-require_once "Tomcat.php";
+require_once "/cPanel4jCore/DBWrapper.php";
+require_once "/cPanel4jCore/Tomcat.php";
 $cpanel = new CPANEL();
 $cpanel->set_debug(1);
 error_reporting(E_ALL);
