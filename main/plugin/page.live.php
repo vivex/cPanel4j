@@ -73,6 +73,8 @@ if ($action == "list") {
     ?>
 
     <?php
+    echo "<br/><center><a href='https://www.cpanel4j.com'>Powered By cPanel4j</a></center>";
+
     echo $cpanel->footer();
     ?>
 
@@ -141,7 +143,6 @@ if ($action == "list") {
     echo $cpanel->header('cPanel4J');
     $domainListApiCall = $cpanel->api2('DomainLookup', 'getbasedomains', array());
     $domainList = $domainListApiCall['cpanelresult']['data'];
-//print_r($domainListApiCall);
     echo '<p class="lead">cPanel4J allows you to install Apache Tomcat on your domain name.Tomcat is an application server that executes Java Servlets and renders web pages that include JSP Coding.It will work on default 80 port using ajp proxy (httpd as proxy server).</p>';
     echo '<form class="form-horizontal" action = "page.live.php?action=create_instance_action" method = "POST" role="form">';
     echo '<h4>Apache Tomcat Installer</h4><div class="form-group"><label for="domain" class="col-sm-4 control-label">Domain Name</label>';
@@ -167,6 +168,8 @@ if ($action == "list") {
     </div>
     <?php
     echo "</div></form>";
+    echo "<br/><center><a href='https://www.cpanel4j.com'>Powered By cPanel4j</a></center>";
+
     echo $cpanel->footer();
 } else if ($action == "create_instance_action") {
     $domainName = $_POST['domainName'];
@@ -191,6 +194,7 @@ if ($action == "list") {
     } else {
         echo "Form Data Error";
     }
+    echo "<br/><center><a href='https://www.cpanel4j.com'>Powered By cPanel4j</a></center>";
 
     echo $cpanel->footer();
 } else if ($action == "start_tomcat_instance") {

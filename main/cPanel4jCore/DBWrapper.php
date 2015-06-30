@@ -17,7 +17,7 @@ $createDate = $now->format('Y-m-d H:i:s');
 		http_port,ajp_port,create_date) values('$userName','$domainName','$tomcatVersion','$shutDownPort',
 		'$httpPort','$ajpPort','$createDate')";
  	$q = mysql_query($query,$this->connection);
- 	//echo mysql_error();
+// 	echo mysql_error();
  	return ($q) ? true : false ;
 }
 
