@@ -17,12 +17,15 @@ echo "\nFiles Removed ,Now Removing Database"
 
 php sql-uninstall.php
 
+echo "************************************************************************"
 
-echo "\n cPanel4j Removed Succesfully. \n You have to delete software file manually by running command  \"rm -rf /cPanel4jCore\" "
+echo "              cPanel4j Removed Succesfully.                             "
+echo "   Delete software file manually by running command  \"rm -rf /cPanel4jCore\" "
+echo " Open etc/rc.d/rc.local file and remove line which contains php /cPanel4jCore/startup.sh "
 
-echo "\n Open etc/rc.d/rc.local file and remove line which contains php /cPanel4jCore/startup.sh"
+echo "                       Thats it                                             " 
 
-echo "Thats it"
+echo "************************************************************************"
 
 
 

@@ -11,28 +11,32 @@ require_once "Config.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-class Tomcat extends Config {
+class Tomcat extends Config
+{
 
     private $DBWrapper;
 
-
-    public function __construct() {
+    public function __construct ()
+    {
         $this->DBWrapper = new DBWrapper();
     }
 
-    public function generateRandomPortNumber($reservedArray) {
+    public function generateRandomPortNumber ($reservedArray)
+    {
         $random = true;
         while ($random) {
             $temp = rand(2000, 18000);
             if (array_search($temp, $reservedArray)) {
                 continue;
-            } else {
+            }
+            else {
                 return $temp;
             }
         }
     }
 
-    public function getReservedPorts() {
+    public function getReservedPorts ()
+    {
         $reservedPorts = $this->reservedPorts;
         $userPorts = $this->DBWrapper->getAllPorts();
         if ($userPorts == null)
@@ -41,7 +45,8 @@ class Tomcat extends Config {
         return $result;
     }
 
-    public function createInstance($domainName, $userName, $tomcatVersion) {
+    public function createInstance ($domainName, $userName, $tomcatVersion)
+    {
         $result = "";
         $reservedArray = $this->getReservedPorts();
         //check if  domain already exists exists in instances
@@ -64,7 +69,8 @@ class Tomcat extends Config {
             //Step 1st Creating User Tomcat Directory
             if (!file_exists($userTomcatDir)) {
                 exec("mkdir -p " . $userTomcatDir);
-            } else {
+            }
+            else {
                 $result .="User Tomcat Directory Already Exists";
             }
 
@@ -117,10 +123,10 @@ class Tomcat extends Config {
             fclose($configFile);
 
 
-          
 
 
-            //TODO: verifying installation 
+
+            //TODO: verifying installation
             // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
             $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
@@ -131,12 +137,14 @@ class Tomcat extends Config {
             //cool now write this installation back to xml file
             echo $result;
             return array("status" => 'success', 'message' => 'Instance Created Successfully');
-        } else {
+        }
+        else {
             return array('status' => 'fail', 'message' => "Domain Is already there");
         }
     }
 
-    public function tomcatInstanceAction($id, $userName, $action) {
+    public function tomcatInstanceAction ($id, $userName, $action)
+    {
         $i = $this->DBWrapper->getInstance($id);
         if ($i['user_name'] == $userName) {
             $this->DBWrapper->setCronFlag($id, 0);
@@ -144,7 +152,8 @@ class Tomcat extends Config {
         }
     }
 
-    public function deleteInstance($instanceId, $userName) {
+    public function deleteInstance ($instanceId, $userName)
+    {
         if ($this->DBWrapper->getUserNameByInstanceId($instanceId) == $userName) {
             $this->DBWrapper->setCronFlag($instanceId, 0);
             $this->DBWrapper->setDeleteFlag($instanceId);

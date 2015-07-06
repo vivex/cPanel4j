@@ -1,6 +1,6 @@
-echo "cPanel4J - Tomcat Installer Plugin For cPanel \n"
+echo "cPanel4J - Tomcat Installer Plugin For cPanel "
 
-echo "Starting The Installation \n"
+echo "Starting The Installation "
 
 rm -f /usr/local/cpanel/base/frontend/paper_lantern/dynamicui/dynamicui_tomcat_installer.conf
 rm -f /usr/local/cpanel/base/frontend/paper_lantern/dynamicui/dynamicui_tomcat_instances.conf
@@ -20,7 +20,7 @@ cp -r plugin_x3/* /usr/local/cpanel/base/frontend/x3/cpanel4j
 
 cp Config.php cPanel4jCore/
 
-cp -r cPanel4jCore /
+mv  cPanel4jCore /
 
 chmod -R 755 /cPanel4jCore/tomcat-7.0.59-template /cPanel4jCore/tomcat-8.0.18-template
 
@@ -41,7 +41,7 @@ if [ -z "$isStartThere" ]; then
    echo $startUpCmd  >> /etc/rc.d/rc.local
 fi
 
-echo "\nIcons created"
+echo "Icons created"
 php sql_install.php
 
 

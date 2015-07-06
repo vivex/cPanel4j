@@ -1,8 +1,8 @@
 #!/usr/bin/php
 <?php
-include 'DBWrapper.php';
-include 'Tomcat.php';
-include 'Config.php';
+require_once 'DBWrapper.php';
+require_once 'Tomcat.php';
+require_once 'Config.php';
 $config = new Config();
 $dbWrapper = new DBWrapper();
 $tomcat = new Tomcat();
