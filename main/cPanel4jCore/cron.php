@@ -1,5 +1,7 @@
 <?php
 
+namespace cPanel4jCore;
+
 //CRON JOBS TO BE RUN AS ROOT
 
 require_once "DBWrapper.php";
@@ -68,20 +70,23 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             exec("/usr/local/cpanel/scripts/rebuildhttpdconf");
             exec("/etc/init.d/httpd restart");
             echo exec("sh service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh start");
-        } else if ($row['installed'] == 1) {
+        }
+        else if ($row['installed'] == 1) {
             //mean instance is installed we need to check wheather user want to start or stop
 
             if ($row['status'] == "pending_start") {
                 echo exec("sh service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh start");
                 $dbWrapper->setCronFlag($row['id'], 1);
                 $dbWrapper->setStatus($row['id'], 'start');
-            } else if ($row['status'] == "pending_stop") {
+            }
+            else if ($row['status'] == "pending_stop") {
                 echo exec("sh service-files/" . $userName . "-" . $domainName . "-tomcat-" . $tomcatVersion . ".sh stop");
                 $dbWrapper->setCronFlag($row['id'], 1);
                 $dbWrapper->setStatus($row['id'], 'stop');
             }
         }
-    } else if ($row['delete_flag'] == 1) {
+    }
+    else if ($row['delete_flag'] == 1) {
         //delete the instanmlce
         $id = $row['id'];
         $userName = $row['user_name'];

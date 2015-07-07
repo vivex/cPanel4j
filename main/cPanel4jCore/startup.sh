@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+namespace cPanel4jCore;
 require_once 'DBWrapper.php';
 require_once 'Tomcat.php';
 require_once 'Config.php';
