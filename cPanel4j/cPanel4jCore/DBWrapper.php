@@ -1,11 +1,21 @@
 <?php
 
+/**
+ * cPanel4J
+ * DBWrapper.php
+ * Author: Vivek Soni (contact@viveksoni.net)
+ * Instructions & More Info: www.cpanel4j.com
+ * Released under the GNU General Public License
+ */
+
 namespace cPanel4jCore;
 
 require_once "Config.php";
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
+/**
+ * DBWrapper Class
+ * Deals with datbase methods
+ */
 class DBWrapper extends Config
 {
 
@@ -19,7 +29,7 @@ class DBWrapper extends Config
 
     public function insertTomcatInstance ($userName, $domainName, $httpPort, $ajpPort, $shutDownPort, $tomcatVersion)
     {
-        $now = new DateTime();
+        $now = new \DateTime();
         $createDate = $now->format('Y-m-d H:i:s');
         $query = "insert into `tomcat-instances` (user_name,domain_name,tomcat_version,shutdown_port,
 		http_port,ajp_port,create_date) values('$userName','$domainName','$tomcatVersion','$shutDownPort',

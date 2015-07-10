@@ -61,7 +61,7 @@ class Tomcat extends Config
         $reservedArray = $this->getReservedPorts();
         //check if  domain already exists exists in instances
         if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName) <= 0) {
-            exec("export JAVA_HOME=" . $this->java_home);
+            exec("export JAVA_HOME=" . $this->javaHome);
             //generate three portnumbers
             $shutdown_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $shutdown_port);
@@ -73,7 +73,7 @@ class Tomcat extends Config
             /**
              * Setting Up the instance now
              */
-            $catalinaHome = "/cPanel4jCore/tomcat-" . $tomcatVersion . "-engine";
+            // $catalinaHome = "/cPanel4jCore/tomcat-" . $tomcatVersion . "-engine";
             $userTomcatDir = "/home/" . $userName . "/" . $domainName . "/tomcat-" . $tomcatVersion . "/";
 
             //Step 1st Creating User Tomcat Directory
@@ -93,10 +93,12 @@ class Tomcat extends Config
             exec("rm -f $serverXMLFileName");
             $additionString = "";
             if ($tomcatVersion == "7.0.59") {
+                // if version is 7 then we have to add this line in server.xml not requires in tomcat 8
                 $additionString = '<Listener className="org.apache.catalina.core.JasperListener" />';
             }
+            // Content of server.xml file
             $serverXMLFileContent = <<<EOT
-            <?xml version = "1.0" encoding = "utf-8"?>
+<?xml version = "1.0" encoding = "utf-8"?>
 <Server port="$shutdown_port" shutdown="SHUTDOWN">
     <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
@@ -131,23 +133,20 @@ class Tomcat extends Config
     </Service>
 </Server>
 EOT;
+            // Writing Server.xml file
             $configFile = fopen($serverXMLFileName, "w");
             fwrite($configFile, $serverXMLFileContent);
             fclose($configFile);
 
-
-
-
-
-//TODO: verifying installation
-// $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
-//Adding HTTP (ONLY HTTP) Port in iptables allow list
+            //TODO: verifying installation
+            // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
+            //Adding HTTP (ONLY HTTP) Port in iptables allow list
             $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
             $result.= exec("/etc/init.d/iptables restart");
 
             $this->DBWrapper->insertTomcatInstance($userName, $domainName, $http_port, $ajp_port, $shutdown_port, $tomcatVersion);
 
-//cool now write this installation back to xml file
+            //cool now write this installation back to xml file
             echo $result;
             return array("status" => 'success', 'message' => 'Instance Created Successfully');
         }
@@ -156,6 +155,12 @@ EOT;
         }
     }
 
+    /**
+     * Performs Action on tomcat instnace (like start stop delete)
+     * @param int $id
+     * @param string $userName
+     * @param string $action
+     */
     public function tomcatInstanceAction ($id, $userName, $action)
     {
         $i = $this->DBWrapper->getInstance($id);
@@ -165,6 +170,13 @@ EOT;
         }
     }
 
+    /**
+     * Deletes the instance
+     * Initiates a cron to delete files & from database
+     * @param int $instanceId
+     * @param string $userName
+     * @return boolean
+     */
     public function deleteInstance ($instanceId, $userName)
     {
         if ($this->DBWrapper->getUserNameByInstanceId($instanceId) == $userName) {
@@ -173,6 +185,7 @@ EOT;
 
             return true;
         }
+        return false;
     }
 
 }

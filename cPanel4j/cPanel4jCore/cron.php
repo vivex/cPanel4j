@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * cPanel4J
+ * sql_install.php
+ * Author: Vivek Soni (contact@viveksoni.net)
+ * Instructions & More Info: www.cpanel4j.com
+ * Released under the GNU General Public License
+ */
+
 namespace cPanel4jCore;
 
 //CRON JOBS TO BE RUN AS ROOT

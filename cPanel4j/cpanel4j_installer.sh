@@ -1,3 +1,16 @@
+#!/bin/bash
+
+###############################################################
+##                                                           ##
+##                  cPanel4j Installer File                  ##
+##           Will install icons, files & database            ##
+##               Author contact@viveksoni.net                ##
+##             Copyright (C) 2015  Vivek Soni                ##
+##        Instructions & More Info -> www.cpnel4j.com        ##
+##       Released under the GNU General Public License       ##
+##                                                           ##
+###############################################################
+ 
 echo "cPanel4J - Tomcat Installer Plugin For cPanel "
 
 echo "Starting The Installation "
@@ -42,6 +55,7 @@ if [ -z "$isStartThere" ]; then
 fi
 
 echo "Icons created"
+
 php sql_install.php
 
 
