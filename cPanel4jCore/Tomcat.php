@@ -145,9 +145,8 @@ EOT;
             $result.= exec("/etc/init.d/iptables restart");
 
             $this->DBWrapper->insertTomcatInstance($userName, $domainName, $http_port, $ajp_port, $shutdown_port, $tomcatVersion);
-
+            // TODO: $result if it have some contain in it then it mean it is a error
             //cool now write this installation back to xml file
-            echo $result;
             return array("status" => 'success', 'message' => 'Instance Created Successfully');
         }
         else {

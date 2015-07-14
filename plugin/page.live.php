@@ -183,6 +183,7 @@ else if ($action == "create_instance") {
     echo $cpanel->footer();
 }
 else if ($action == "create_instance_action") {
+
     $domainName = $_POST['domainName'];
     $tomCatVersion = $_POST['tomcat-version'];
     if (($tomCatVersion == '7.0.59' || $tomCatVersion == '8.0.18') & $domainName != "") {
@@ -198,11 +199,13 @@ else if ($action == "create_instance_action") {
         if ($result['status'] == "success")
             header("Location:page.live.php?action=list");
         else if ($result['status'] == "fail") {
+
             $error = urlencode("This domain already have tomcat instance");
             header("Location:page.live.php?action=create_instance_action&error=" . $error);
         }
     }
     else {
+        echo $cpanel->header('cPanel4J');
         echo "Form Data Error";
     }
     echo "<br/><center><a href='https://www.cpanel4j.com'>Powered By cPanel4j</a></center>";

@@ -57,5 +57,5 @@ $connection = $dbConnect->getConnection();
 mysql_query($query1, $connection);
 
 echo "\n" . mysql_error();
-echo "\nDataBase Created";
+echo "\nDataBase Created \n";
 ?>
