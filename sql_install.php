@@ -9,6 +9,8 @@
 /* MYSQL Commands fo cPanel4J */
 include 'Config.php';
 
+namespace cPanel4jCore;
+
 /**
  * Will create the tomcat-instances table
  */

@@ -9,6 +9,8 @@
  */
 include 'Config.php';
 
+namespace cPanel4jCore;
+
 /* MYSQL Commands to remove tomcat-instances table  */
 
 class DBConnect extends Config

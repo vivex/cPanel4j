@@ -1,9 +1,14 @@
 <?php
 
-//this file should be unEncrypted
-
 namespace cPanel4jCore;
 
+/**
+ * Author: VIVEK SONI (contact@viveksoni.net)
+ * Tomcat Class
+ * Plugin Directory: /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j
+ * Cron Command: * * * * * php /usr/local/cpanel/base/frontend/paper_lantern/cpanel4j/cron.php > cpanel4j_Cron_log.txt
+ *
+ */
 class Config
 {
 
