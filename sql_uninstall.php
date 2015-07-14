@@ -7,9 +7,12 @@
  * Instructions & More Info: www.cpanel4j.com
  * Released under the GNU General Public License
  */
-include 'Config.php';
 
 namespace cPanel4jCore;
+
+include 'Config.php';
+
+
 
 /* MYSQL Commands to remove tomcat-instances table  */
 
