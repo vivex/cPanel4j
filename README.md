@@ -8,11 +8,17 @@ http://cpanel4j.com/how-to-install-cpanel4j/
 
 To install cPanel4j Your system must match following requirements-
 
-CentOs ( >=6)
-cPanel (>= version 11.0)
-Java (JRE version =7 )
-MySQL (also create a database & user for cpanel4j)
-PHP
+--CentOs ( >=6)
+
+--cPanel (>= version 11.0)
+
+--Java (JRE version =7 )
+
+--MySQL (also create a database & user for cpanel4j)
+
+--PHP
+
+
 Make sure that  there is no instance of tomcat already installed on your system.
 
 Make sure java is installed properly by typing echo $JAVA_HOME
