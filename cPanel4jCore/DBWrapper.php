@@ -34,7 +34,7 @@ class DBWrapper extends Config
         $query = "insert into `tomcat-instances` (user_name,domain_name,tomcat_version,shutdown_port,
         http_port,ajp_port,create_date) values('$userName','$domainName','$tomcatVersion','$shutDownPort',
         '$httpPort','$ajpPort','$createDate')";
-        $q = mysqli_query($query, $this->connection);
+       $q = mysqli_query($this->connection, $query);
 // 	echo mysql_error();
         return ($q) ? true : false;
     }
