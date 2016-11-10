@@ -23,8 +23,8 @@ class DBWrapper extends Config
 
     public function __construct ()
     {
-        $this->connection = mysql_connect($this->host, $this->userName, $this->password);
-        mysql_select_db($this->database, $this->connection);
+        $this->connection = mysqli_connect($this->host, $this->userName, $this->password);
+        mysqli_select_db($this->connection, $this->database);
     }
 
     public function insertTomcatInstance ($userName, $domainName, $httpPort, $ajpPort, $shutDownPort, $tomcatVersion)
@@ -32,9 +32,9 @@ class DBWrapper extends Config
         $now = new \DateTime();
         $createDate = $now->format('Y-m-d H:i:s');
         $query = "insert into `tomcat-instances` (user_name,domain_name,tomcat_version,shutdown_port,
-		http_port,ajp_port,create_date) values('$userName','$domainName','$tomcatVersion','$shutDownPort',
-		'$httpPort','$ajpPort','$createDate')";
-        $q = mysql_query($query, $this->connection);
+        http_port,ajp_port,create_date) values('$userName','$domainName','$tomcatVersion','$shutDownPort',
+        '$httpPort','$ajpPort','$createDate')";
+        $q = mysqli_query($query, $this->connection);
 // 	echo mysql_error();
         return ($q) ? true : false;
     }
@@ -42,10 +42,10 @@ class DBWrapper extends Config
     public function getAllPorts ()
     {
         $query = "select shutdown_port,ajp_port,http_port from 'tomcat-instances' where delete_flag=0";
-        $q = mysql_query($query, $this->connection);
+        $q = mysqli_query( $this->connection,$query);
         $ports = array();
         if ($q) {
-            while ($row = mysql_fetch_array($q)) {
+            while ($row = mysqli_fetch_array($q)) {
                 array_push($ports, $row['shutdown_port']);
                 array_push($ports, $row['ajp_port']);
                 array_push($ports, $row['http_port']);
@@ -59,15 +59,15 @@ class DBWrapper extends Config
     public function getTomcatInstancesByUser ($userName)
     {
         $query = "select * from `tomcat-instances` where user_name = '$userName'";
-        return mysql_query($query, $this->connection);
+        return mysqli_query($this->connection, $query);
     }
 
     public function getTomcatInstancesCountByDomain ($domainName)
     {
         $query = "select * from `tomcat-instances` where domain_name = '$domainName' and delete_flag=0";
-        $q = mysql_query($query, $this->connection);
+        $q = mysqli_query($this->connection, $query);
         if ($q)
-            $count = mysql_num_rows($q);
+            $count = mysqli_num_rows($q);
         else
             $count = 0;
 
@@ -78,30 +78,30 @@ class DBWrapper extends Config
     public function getInstance ($id)
     {
         $query = "select * from `tomcat-instances` where id = '$id'  and delete_flag=0 ";
-        $result = mysql_query($query, $this->connection);
-        return mysql_fetch_array($result);
+        $result = mysqli_query($this->connection,$query );
+        return mysqli_fetch_array($result);
     }
 
     public function getAllInstance ()
     {
         $query = "select * from `tomcat-instances` where  delete_flag=0 ";
-        $result = mysql_query($query, $this->connection);
+        $result = mysqli_query($this->connection, $query);
         return $result;
     }
 
     public function getRecordForCron ()
     {
         $query = "select * from `tomcat-instances` where  cron_flag=0";
-        return mysql_query($query, $this->connection);
+        return mysqli_query($this->connection, $query);
     }
 
     public function setCronFlag ($id, $value)
     {
-        $id = mysql_real_escape_string($id);
-        $value = mysql_real_escape_string($value);
+        $id = mysqli_real_escape_string($this->connection, $id);
+        $value = mysqli_real_escape_string($this->connection, $value);
         if ($value == 0 or $value == 1) {
             $query = "update `tomcat-instances` set cron_flag='$value'  where  delete_flag=0 and id='$id'";
-            return mysql_query($query, $this->connection);
+            return mysqli_query($this->connection ,$query );
         }
         else
             return false;
@@ -109,44 +109,44 @@ class DBWrapper extends Config
 
     public function setStatus ($id, $status)
     {
-        $id = mysql_real_escape_string($id);
+        $id = mysqli_real_escape_string($this->connection, $id);
         $query = "update `tomcat-instances` set status='$status' where  id='$id'";
-        return mysql_query($query, $this->connection);
+        return mysqli_query($this->connection, $query);
     }
 
     public function setDeleteFlag ($id)
     {
-        $id = mysql_real_escape_string($id);
+        $id = mysqli_real_escape_string($this->connection, $id);
         $query = "update `tomcat-instances` set delete_flag='1' where  id='$id'";
-        return mysql_query($query, $this->connection);
+        return mysqli_query($this->connection, $query);
     }
 
     public function setInstalledFlag ($id)
     {
-        $id = mysql_real_escape_string($id);
+        $id = mysqli_real_escape_string($this->connection, $id);
         $query = "update `tomcat-instances` set installed='1'  where  id='$id'";
-        return mysql_query($query, $this->connection);
+        return mysqli_query($this->connection, $query);
     }
 
     public function hardDeleteTCInstance ($id, $userName)
     {
-        $id = mysql_real_escape_string($id);
-        $userName = mysql_real_escape_string($userName);
+        $id = mysqli_real_escape_string($this->connection, $id);
+        $userName = mysqli_real_escape_string($this->connection, $userName);
         $query = "delete from `tomcat-instances` where id='$id' and user_name='$userName'";
-        return mysql_query($query, $this->connection);
+        return mysqli_query($this->connection, $query);
     }
 
     public function getUserNameByInstanceId ($instanceId)
     {
         $query = "select user_name from `tomcat-instances` where id='$instanceId'";
-        $r = mysql_query($query, $this->connection);
-        $row = mysql_fetch_array($r);
+        $r = mysqli_query($this->connection, $query);
+        $row = mysqli_fetch_array($r);
         return $row['user_name'];
     }
 
     public function __destruct ()
     {
-        mysql_close($this->connection);
+        mysqli_close($this->connection);
     }
 
 }
