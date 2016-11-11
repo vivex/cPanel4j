@@ -40,6 +40,7 @@ restart) \n sh \$CATALINA_HOME/bin/shutdown.sh \n sh \$CATALINA_HOME/binstartup.
             fwrite($serviceFile, $serviceFileContent);
             fclose($serviceFile);
 
+            exec("chown $userName $fileName");
             //Now have to add vhosts entry
 
             $vhostFileDir = "/usr/local/apache/conf/userdata/std/2/" . $userName . "/" . $domainName;
