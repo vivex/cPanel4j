@@ -24,7 +24,7 @@ class Tomcat extends Config
 
     public function __construct ()
     {
-        exec("export JAVA_HOME=".$this->javaHome)
+        exec("export JAVA_HOME=".$this->javaHome);
         $this->DBWrapper = new DBWrapper();
     }
 
