@@ -9,10 +9,13 @@
  */
 
 namespace cPanel4jCore;
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 
-require_once "Config.php";
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once "/cPanel4jCore/Config.php";
+
+require_once('/cPanel4jCore/libs/log4php/Logger.php');
+\Logger::configure('/cPanel4jCore/log4phpConfig.xml');
 
 /**
  * This Class deals with tomcat installation
@@ -21,22 +24,27 @@ class Tomcat extends Config
 {
 
     private $DBWrapper;
+    public $logger;
+    private $who;
 
-    public function __construct ()
+    public function __construct()
     {
-        exec("export JAVA_HOME=".$this->javaHome);
+        $this->who = 'Tomcat|';
+        $this->logger = \Logger::getLogger("main");
+        $this->logger->debug($this->who . '__construct| INSIDE');
+        exec("export JAVA_HOME=" . $this->javaHome);
         $this->DBWrapper = new DBWrapper();
     }
 
-    public function generateRandomPortNumber ($reservedArray)
+    public function generateRandomPortNumber($reservedArray)
     {
+        $this->logger->debug($this->who . 'generateRandomPortNumber| INSIDE');
         $random = true;
         while ($random) {
             $temp = rand(2000, 18000);
             if (array_search($temp, $reservedArray)) {
                 continue;
-            }
-            else {
+            } else {
                 return $temp;
             }
         }
@@ -46,8 +54,9 @@ class Tomcat extends Config
      * Read all the used ports from database & config file and returns array
      * @return array
      */
-    public function getReservedPorts ()
+    public function getReservedPorts()
     {
+        $this->logger->debug($this->who . 'getReservedPorts| INSIDE');
         $reservedPorts = $this->reservedPorts;
         $userPorts = $this->DBWrapper->getAllPorts();
         if ($userPorts == null)
@@ -56,14 +65,16 @@ class Tomcat extends Config
         return $result;
     }
 
-    public function createInstance ($domainName, $userName, $tomcatVersion)
+    public function createInstance($domainName, $userName, $tomcatVersion)
     {
+        $this->logger->debug($this->who . 'createInstance| INSIDE');
         $result = "";
         $reservedArray = $this->getReservedPorts();
         //check if  domain already exists exists in instances
         if ($this->DBWrapper->getTomcatInstancesCountByDomain($domainName) <= 0) {
+            $this->logger->debug($this->who . ': No Instance Found So Installing Instance');
             exec("export JAVA_HOME=" . $this->javaHome);
-            //generate three portnumbers
+            //generate three port numbers
             $shutdown_port = $this->generateRandomPortNumber($reservedArray);
             array_push($reservedArray, $shutdown_port);
             $http_port = $this->generateRandomPortNumber($reservedArray);
@@ -80,14 +91,13 @@ class Tomcat extends Config
             //Step 1st Creating User Tomcat Directory
             if (!file_exists($userTomcatDir)) {
                 exec("mkdir -p " . $userTomcatDir);
-            }
-            else {
-                $result .="User Tomcat Directory Already Exists";
+            } else {
+                $result .= "User Tomcat Directory Already Exists";
             }
 
             //step 2nd Moving tomcat installation files to user tomcat directory
 
-            $result.= exec("cp -r /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/logs /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/conf /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/temp /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
+            $result .= exec("cp -r /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/logs /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/conf /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/temp /cPanel4jCore/tomcat-" . $tomcatVersion . "-template/webapps " . $userTomcatDir);
 
             //step 3rd Writing Server.XML File
             $serverXMLFileName = $userTomcatDir . "conf/server.xml";
@@ -142,15 +152,15 @@ EOT;
             //TODO: verifying installation
             // $isInstalled = $this->verifyInstallation($userTomcatDir,$serviceFile);
             //Adding HTTP (ONLY HTTP) Port in iptables allow list
-            $result.= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
-            $result.= exec("/etc/init.d/iptables restart");
+            $result .= exec("iptables -A INPUT -p tcp --dport " . $http_port . " -j ACCEPT");
+            $result .= exec("/etc/init.d/iptables restart");
 
             $this->DBWrapper->insertTomcatInstance($userName, $domainName, $http_port, $ajp_port, $shutdown_port, $tomcatVersion);
             // TODO: $result if it have some contain in it then it mean it is a error
-            //cool now write this installation back to xml file
+            //write this installation back to xml file
+            $this->logger->debug($this->who . 'Result: ' . $result);
             return array("status" => 'success', 'message' => 'Instance Created Successfully');
-        }
-        else {
+        } else {
             return array('status' => 'fail', 'message' => "Domain Is already there");
         }
     }
@@ -161,8 +171,9 @@ EOT;
      * @param string $userName
      * @param string $action
      */
-    public function tomcatInstanceAction ($id, $userName, $action)
+    public function tomcatInstanceAction($id, $userName, $action)
     {
+        $this->logger->debug($this->who . 'tomcatInstanceAction| INSIDE');
         $i = $this->DBWrapper->getInstance($id);
         if ($i['user_name'] == $userName) {
             $this->DBWrapper->setCronFlag($id, 0);
@@ -177,8 +188,9 @@ EOT;
      * @param string $userName
      * @return boolean
      */
-    public function deleteInstance ($instanceId, $userName)
+    public function deleteInstance($instanceId, $userName)
     {
+        $this->logger->debug($this->who . 'deleteInstance| INSIDE');
         if ($this->DBWrapper->getUserNameByInstanceId($instanceId) == $userName) {
             $this->DBWrapper->setCronFlag($instanceId, 0);
             $this->DBWrapper->setDeleteFlag($instanceId);

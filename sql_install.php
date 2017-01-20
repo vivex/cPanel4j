@@ -22,8 +22,7 @@ class DBConnect extends Config
 
     public function __construct ()
     {
-        $this->connection = mysql_connect($this->host, $this->userName, $this->password);
-        mysql_select_db($this->database, $this->connection);
+        $this->connection = mysqli_connect($this->host, $this->userName, $this->password, $this->database);
     }
 
     public function getConnection ()
@@ -54,7 +53,7 @@ $query1 = "CREATE TABLE `tomcat-instances` (
 
 $dbConnect = new DBConnect();
 $connection = $dbConnect->getConnection();
-mysql_query($query1, $connection);
+mysqli_query($connection, $query1);
 
 echo "\n" . mysql_error();
 echo "\nDataBase Created \n";

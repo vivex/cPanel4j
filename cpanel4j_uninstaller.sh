@@ -1,11 +1,11 @@
-//unsintaller.sh
+#!/bin/bash
 ###############################################################
 ##                                                           ##
 ##                cPanel4j UnInstaller File                  ##
 ##               Will remove icons & database                ##
 ##               Author contact@viveksoni.net                ##
 ##             Copyright (C) 2015  Vivek Soni                ##
-##        Instructions & More Info -> www.cpnel4j.com        ##
+##      Instructions & More Info -> cpanel4j.viveksoni.net   ##
 ##       Released under the GNU General Public License       ##
 ##                                                           ##
 ###############################################################
