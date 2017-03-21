@@ -19,11 +19,13 @@ To install cPanel4j Your system must match following requirements-
 - MySQL (also create a database & user for cpanel4j)
 
 - PHP
-
+- ModSecurity™ Tools Disabled
 
 Make sure that  there is no instance of tomcat already installed on your system.
 
 Make sure java is installed properly by typing echo $JAVA_HOME
+
+Make sure you have disabled the ModSecurity™ Tools because this tool blocks redirect to tomcat
 
 Download the zip folder  from github (https://github.com/vivex/cPanel4j )
 
